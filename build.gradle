@@ -1,0 +1,31 @@
+group 'pt.davidafsilva.ghn'
+version '0.0.1-SNAPSHOT'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // compile
+    compile 'io.projectreactor:reactor-core:3.0.5.RELEASE'
+    compile 'io.projectreactor.ipc:reactor-netty:0.6.2.RELEASE'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.8.7'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.7'
+    compile 'com.jfoenix:jfoenix:1.0.0'
+    compile 'org.controlsfx:controlsfx:8.40.12'
+
+    // test
+    testCompile 'junit:junit:4.12'
+    testCompile 'io.projectreactor.addons:reactor-test:3.0.5.RELEASE'
+}

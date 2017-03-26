@@ -1,0 +1,13 @@
+.ghn-button {
+    -jfx-button-type: RAISED;
+    -fx-background-color: rgb(73,92,102);
+    -fx-pref-width: 60;
+    -fx-text-fill: WHITE;
+}
+
+.ghn-button-exit {
+    -jfx-button-type: RAISED;
+    -fx-background-color: rgb(219,137,137);
+    -fx-pref-width: 60;
+    -fx-text-fill: WHITE;
+}
