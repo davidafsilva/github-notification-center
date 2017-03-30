@@ -170,16 +170,18 @@ public class LoginView extends GridPane {
   }
 
   private void showTooltip(final Node container, final String message) {
-    final HBox content = new HBox();
-    content.getChildren().add(new Label(message));
-    content.setPadding(new Insets(5));
-    content.setAlignment(Pos.CENTER);
-    PopOver popOver = new PopOver(content);
-    popOver.setFadeInDuration(Duration.millis(500));
-    popOver.setFadeOutDuration(Duration.millis(500));
-    popOver.setAutoHide(true);
-    Platform.runLater(() -> popOver.show(container));
-    Schedulers.timer().schedule(() -> Platform.runLater(popOver::hide), 5, TimeUnit.SECONDS);
+    if (message != null && !message.isEmpty()) {
+      final HBox content = new HBox();
+      content.getChildren().add(new Label(message));
+      content.setPadding(new Insets(5));
+      content.setAlignment(Pos.CENTER);
+      PopOver popOver = new PopOver(content);
+      popOver.setFadeInDuration(Duration.millis(500));
+      popOver.setFadeOutDuration(Duration.millis(500));
+      popOver.setAutoHide(true);
+      Platform.runLater(() -> popOver.show(container));
+      Schedulers.timer().schedule(() -> Platform.runLater(popOver::hide), 5, TimeUnit.SECONDS);
+    }
   }
 
   void loginSuccessful() {

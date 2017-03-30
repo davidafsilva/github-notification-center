@@ -36,7 +36,7 @@ public class LoginController {
 
   private void doLogin(final String username, final String password, final String code) {
     final GitHubAuthService authService = appContext.getGitHubAuthService();
-    authService.authenticate(username, password, code)
+    authService.loginWithPassword(username, password, code)
         .timeout(Duration.ofSeconds(15))
         .log()
         .doOnError(TwoFactorAuthRequiredException.class,
@@ -53,8 +53,6 @@ public class LoginController {
             appController.showMainView();
           });
         })
-        .doOnCancel(() -> Platform.runLater(() ->
-            loginView.displayUnexpectedError("login was canceled")))
         .subscribeOn(appContext.getWorkScheduler())
         .subscribe();
   }
