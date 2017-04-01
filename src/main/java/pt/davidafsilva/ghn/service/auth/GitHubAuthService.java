@@ -19,7 +19,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import pt.davidafsilva.ghn.ApplicationOptions;
 import pt.davidafsilva.ghn.model.User;
 import reactor.core.Exceptions;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.ipc.netty.http.client.HttpClient;
 import reactor.ipc.netty.http.client.HttpClientException;
@@ -57,8 +56,8 @@ public class GitHubAuthService {
     this.tokenUrl = url(applicationOptions, TOKEN_URL_PATH);
   }
 
-  public Mono<User> loginWithToken(final String user, final String token) {
-    return doLogin(user, token, null, r -> (u, t) -> addTokenAuthorization(r, u, t));
+  public Mono<User> loginWithToken(final String token) {
+    return doLogin(null, token, null, r -> (u, t) -> addTokenAuthorization(r, t));
   }
 
   public Mono<User> loginWithPassword(final String user, final String password, final String code) {
@@ -66,11 +65,11 @@ public class GitHubAuthService {
   }
 
   public Mono<String> createToken(final String user, final String password, final String code) {
-    return client.post(tokenUrl, request -> sendRequest(request, user, password, null,
+    return client.post(tokenUrl, request -> sendRequest(request, user, password, code,
         r -> (u, p) -> addBasicAuthorization(r, u, p),
         r -> r.sendString(Mono.just(TOKEN_AUTH_REQUEST_BODY))))
-        .mapError(this::isUnauthorizedOrForbidden, InvalidCredentialsException::new)
         .mapError(this::is2FactorRequired, TwoFactorAuthRequiredException::new)
+        .mapError(this::isUnauthorizedOrForbidden, InvalidCredentialsException::new)
         .mapError(this::isTokenAlreadyCreated, TokenExistsException::new)
         .filter(r -> r.status() == HttpResponseStatus.CREATED)
         .flatMap(this::decodeJson)
@@ -87,8 +86,12 @@ public class GitHubAuthService {
         .mapError(this::isUnauthorizedOrForbidden, InvalidCredentialsException::new)
         .filter(r -> r.status() == HttpResponseStatus.OK)
         .flatMap(this::decodeJson)
-        .map(json -> new User(u, p, getAvatarUrl(json).orElse(null)))
+        .map(json -> new User(getUsername(json), p, getAvatarUrl(json).orElse(null)))
         .next();
+  }
+
+  private String getUsername(final JsonNode json) {
+    return json.get("login").asText();
   }
 
   private Optional<String> getAvatarUrl(final JsonNode json) {
@@ -102,7 +105,7 @@ public class GitHubAuthService {
     return Optional.empty();
   }
 
-  private Flux<JsonNode> decodeJson(final HttpClientResponse response) {
+  private Mono<JsonNode> decodeJson(final HttpClientResponse response) {
     return response
         .receive()
         .asInputStream()
@@ -115,7 +118,8 @@ public class GitHubAuthService {
           } finally {
             response.dispose();
           }
-        });
+        })
+        .next();
   }
 
   private Publisher<Void> sendRequest(final HttpClientRequest request,
@@ -149,8 +153,8 @@ public class GitHubAuthService {
   }
 
   private HttpClientRequest addTokenAuthorization(final HttpClientRequest request,
-      final String user, final String token) {
-    return request.header(AUTHORIZATION, "token " + user + ":" + token);
+      final String token) {
+    return request.header(AUTHORIZATION, "token " + token);
   }
 
   private boolean isTokenAlreadyCreated(final Throwable throwable) {

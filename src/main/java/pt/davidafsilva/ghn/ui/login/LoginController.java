@@ -57,7 +57,7 @@ public class LoginController {
             options.setToken(token);
             appContext.getApplicationOptionsService().save(options);
           })
-          .flatMap(token -> authService.loginWithToken(username, token))
+          .flatMap(authService::loginWithToken)
           .next();
     }
 
