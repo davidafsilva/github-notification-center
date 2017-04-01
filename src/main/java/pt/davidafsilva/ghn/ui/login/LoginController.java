@@ -43,25 +43,40 @@ public class LoginController {
     final GitHubAuthService authService = appContext.getGitHubAuthService();
     final Mono<User> authProcedure;
     if (!createToken) {
-      // do the login
-      authProcedure = authService.loginWithPassword(username, password, code);
+      // do the login -
+      authProcedure = isToken(password) ?
+          authService.loginWithToken(password) :
+          authService.loginWithPassword(username, password, code);
     } else {
       // create the token and login
-      authProcedure = authService.createToken(username, password, code)
-          .filter(s -> s != null && !s.isEmpty())
-          .doOnError(TokenExistsException.class,
-              t -> Platform.runLater(loginView::displayTokenExists))
-          .doOnSuccess(token -> {
-            // save token
-            final ApplicationOptions options = appContext.getOptions();
-            options.setToken(token);
-            appContext.getApplicationOptionsService().save(options);
-          })
-          .flatMap(authService::loginWithToken)
-          .next();
+      authProcedure = createToken(username, password, code)
+          .then(authService::loginWithToken);
     }
 
     // proceed with the login
+    loginWith(authProcedure);
+  }
+
+  private boolean isToken(final String credential) {
+    return credential.length() == 64;
+  }
+
+  private Mono<String> createToken(final String username, final String password,
+      final String code) {
+    final GitHubAuthService authService = appContext.getGitHubAuthService();
+    return authService.createToken(username, password, code)
+        .filter(s -> s != null && !s.isEmpty())
+        .doOnError(TokenExistsException.class,
+            t -> Platform.runLater(loginView::displayTokenExists))
+        .doOnSuccess(token -> {
+          // save token
+          final ApplicationOptions options = appContext.getOptions();
+          options.setToken(token);
+          appContext.getApplicationOptionsService().save(options);
+        });
+  }
+
+  private void loginWith(final Mono<User> authProcedure) {
     authProcedure
         .timeout(Duration.ofSeconds(15))
         .log()
@@ -72,7 +87,6 @@ public class LoginController {
         .doOnError(t -> !GhnException.class.isInstance(t),
             t -> Platform.runLater(() -> loginView.displayUnexpectedError(t.getLocalizedMessage())))
         .doOnSuccess(user -> {
-          System.out.println(user);
           appContext.setUser(user);
           Platform.runLater(() -> {
             loginView.loginSuccessful();

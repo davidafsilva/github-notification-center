@@ -166,9 +166,7 @@ public class LoginView extends GridPane {
     progressSpinner.setVisible(false);
     setDisabled(false);
     twoFactorField.requestFocus();
-    Platform.runLater(() -> showTooltip(twoFactorField,
-        "2-Factor Authentication Code Required", () -> {
-        }));
+    showTooltip(twoFactorField, "2-Factor Authentication Code Required", () -> {});
   }
 
   void displayInvalidCredentials() {
@@ -209,7 +207,8 @@ public class LoginView extends GridPane {
       popOver.setFadeInDuration(Duration.millis(500));
       popOver.setFadeOutDuration(Duration.millis(500));
       popOver.setAutoHide(true);
-      Platform.runLater(() -> popOver.show(container));
+      Schedulers.timer().schedule(() -> Platform.runLater(() -> popOver.show(container)),
+          250, TimeUnit.MILLISECONDS);
       Schedulers.timer().schedule(() -> Platform.runLater(popOver::hide), 5, TimeUnit.SECONDS);
     }
   }
