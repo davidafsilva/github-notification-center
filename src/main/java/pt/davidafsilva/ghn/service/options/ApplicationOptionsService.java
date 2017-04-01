@@ -1,7 +1,5 @@
 package pt.davidafsilva.ghn.service.options;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,7 +16,7 @@ import pt.davidafsilva.ghn.ApplicationOptions;
 public class ApplicationOptionsService {
 
   private static final Logger LOGGER = Logger.getLogger(ApplicationOptionsService.class.getName());
-  private static final String HOME = System.getenv("user.home");
+  private static final String HOME = System.getProperty("user.home");
   private static final String COMMENT = "GHN Hub configuration";
 
   private final ApplicationOptions options;
@@ -28,7 +26,7 @@ public class ApplicationOptionsService {
     try {
       final Path configFile = getFileLocation();
       if (Files.exists(configFile)) {
-        p.load(ApplicationOptions.class.getResourceAsStream(configFile.toString()));
+        p.load(Files.newInputStream(configFile));
       }
     } catch (final IOException e) {
       LOGGER.log(Level.WARNING, "unable to read application properties: " + e.getMessage());
@@ -40,17 +38,13 @@ public class ApplicationOptionsService {
     return options;
   }
 
-  public boolean save(final ApplicationOptions options) {
+  public void save(final ApplicationOptions options) {
     try {
       final Path configFile = getFileLocation();
-      options.getProperties()
-          .store(new BufferedWriter(new FileWriter(configFile.toFile())), COMMENT);
-      return true;
+      options.getProperties().store(Files.newOutputStream(configFile), COMMENT);
     } catch (final IOException e) {
       LOGGER.log(Level.WARNING, "unable to save application properties");
     }
-
-    return false;
   }
 
   private Path getFileLocation() {
