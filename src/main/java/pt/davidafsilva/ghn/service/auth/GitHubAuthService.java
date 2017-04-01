@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.reactivestreams.Publisher;
 
 import java.io.IOException;
+import java.io.SequenceInputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -109,6 +110,7 @@ public class GitHubAuthService {
     return response
         .receive()
         .asInputStream()
+        .reduce(SequenceInputStream::new)
         .map(in -> {
           final ObjectMapper mapper = new ObjectMapper();
           try {
@@ -118,8 +120,7 @@ public class GitHubAuthService {
           } finally {
             response.dispose();
           }
-        })
-        .next();
+        });
   }
 
   private Publisher<Void> sendRequest(final HttpClientRequest request,
