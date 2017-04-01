@@ -17,14 +17,17 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import pt.davidafsilva.ghn.util.Consumer4;
@@ -138,6 +141,22 @@ public class LoginView extends GridPane {
             rememberCheckBox.isSelected()));
   }
 
+  private void toggleTwoFactorField(final boolean visible) {
+    if (visible == twoFactorField.isVisible()) {
+      return;
+    }
+    twoFactorCodeLabel.setVisible(!twoFactorCodeLabel.isVisible());
+    twoFactorCodeLabel.setDisable(!twoFactorCodeLabel.isDisabled());
+    twoFactorField.clear();
+    twoFactorField.setVisible(!twoFactorField.isVisible());
+    twoFactorField.setDisable(!twoFactorField.isDisabled());
+
+    if (twoFactorField.getParent() == null && visible) {
+      loginForm.add(twoFactorCodeLabel, 0, 3);
+      loginForm.add(twoFactorField, 1, 3);
+    }
+  }
+
   private void doLogin(final String user, final String password, final String code,
       final boolean createToken) {
     // disable UI
@@ -149,60 +168,49 @@ public class LoginView extends GridPane {
   }
 
   void displayTwoFactorCode() {
-    twoFactorCodeLabel.setVisible(true);
-    twoFactorCodeLabel.setDisable(false);
-    twoFactorField.setVisible(true);
-    twoFactorField.setDisable(false);
-    twoFactorField.clear();
-
     userField.setDisable(true);
     passwordField.setDisable(true);
-
-    if (twoFactorField.getParent() == null) {
-      loginForm.add(twoFactorCodeLabel, 0, 3);
-      loginForm.add(twoFactorField, 1, 3);
-    }
+    toggleTwoFactorField(true);
 
     progressSpinner.setVisible(false);
     setDisabled(false);
     twoFactorField.requestFocus();
-    showTooltip(twoFactorField, "2-Factor Authentication Code Required", () -> {});
+    showTooltip(twoFactorField, new Label("2-Factor Authentication Code Required"));
   }
 
   void displayInvalidCredentials() {
-    displayErrorMessage("Invalid credentials", () -> {
-    });
+    displayErrorMessage(new Label("Invalid credentials"));
     passwordField.requestFocus();
   }
 
   void displayUnexpectedError(final String message) {
-    displayErrorMessage(message, () -> {
-    });
+    displayErrorMessage(new Label(message));
   }
 
   void displayTokenExists() {
-    displayErrorMessage("There's already an existent token." + System.lineSeparator() +
-            "Please delete it and login again." + System.lineSeparator() + System.lineSeparator() +
-            "Go to a https://github.com/settings/tokens",
-        () -> urlOpener.accept("https://github.com/settings/tokens"));
+    final VBox container = new VBox();
+    container.getChildren().add(new Label("There's already an existent token."));
+    container.getChildren().add(new Label("Please delete it and login again."));
+    final Hyperlink link = new Hyperlink("Go to a https://github.com/settings/tokens");
+    link.setOnAction(e -> urlOpener.accept("https://github.com/settings/tokens"));
+    link.setBorder(Border.EMPTY);
+    container.getChildren().add(link);
+    displayErrorMessage(container);
   }
 
-  private void displayErrorMessage(final String message, final Runnable onClick) {
+  private void displayErrorMessage(final Node message) {
     twoFactorField.clear();
     progressSpinner.setVisible(false);
     setDisabled(false);
-    showTooltip(passwordField, message, onClick);
+    showTooltip(passwordField, message);
   }
 
-  private void showTooltip(final Node container, final String message, final Runnable onClick) {
-    if (message != null && !message.isEmpty()) {
+  private void showTooltip(final Node container, final Node message) {
+    if (message != null) {
       final HBox content = new HBox();
-      final Label label = new Label(message);
-      content.getChildren().add(label);
+      content.getChildren().add(message);
       content.setPadding(new Insets(5));
       content.setAlignment(Pos.CENTER);
-      content.setOnMouseReleased(e -> onClick.run());
-      content.setOnTouchReleased(e -> onClick.run());
       PopOver popOver = new PopOver(content);
       popOver.setFadeInDuration(Duration.millis(500));
       popOver.setFadeOutDuration(Duration.millis(500));
