@@ -19,6 +19,6 @@ public class ApplicationRunner extends Application {
 
   @Override
   public void start(final Stage primaryStage) throws Exception {
-    ApplicationController.start(primaryStage);
+    ApplicationController.start(this, primaryStage);
   }
 }

@@ -1,6 +1,7 @@
 package pt.davidafsilva.ghn.ui.login;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXTextField;
@@ -8,6 +9,7 @@ import com.jfoenix.controls.JFXTextField;
 import org.controlsfx.control.PopOver;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -25,7 +27,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import pt.davidafsilva.ghn.util.Consumer3;
+import pt.davidafsilva.ghn.util.Consumer4;
 import reactor.core.scheduler.Schedulers;
 
 /**
@@ -38,16 +40,19 @@ public class LoginView extends GridPane {
   private JFXSpinner progressSpinner;
   private JFXTextField userField, twoFactorField;
   private JFXPasswordField passwordField;
+  private JFXCheckBox rememberCheckBox;
   private GridPane loginForm;
 
   // callbacks
-  private final Consumer3<String, String, String> onLogin;
+  private final Consumer4<String, String, String, Boolean> onLogin;
   private final Runnable onCancel;
+  private final Consumer<String> urlOpener;
 
-  LoginView(final Consumer3<String, String, String> onLogin,
-      final Runnable onCancel) {
+  LoginView(final Consumer4<String, String, String, Boolean> onLogin,
+      final Runnable onCancel, final Consumer<String> urlOpener) {
     this.onLogin = onLogin;
     this.onCancel = onCancel;
+    this.urlOpener = urlOpener;
   }
 
   void initView() {
@@ -85,6 +90,10 @@ public class LoginView extends GridPane {
     passwordField.setTooltip(new Tooltip("Your GitHub password"));
     loginForm.add(passwordField, 1, 1);
 
+    rememberCheckBox = new JFXCheckBox("Remember?");
+    rememberCheckBox.setTooltip(new Tooltip("Creates an Application Token and remembers it"));
+    loginForm.add(rememberCheckBox, 1, 2);
+
     twoFactorCodeLabel = new Label("2F Code:");
     twoFactorCodeLabel.setVisible(false);
     twoFactorCodeLabel.setDisable(true);
@@ -117,26 +126,29 @@ public class LoginView extends GridPane {
     // add event listeners
     final EventHandler<KeyEvent> enterEventHandler = ke -> {
       if (ke.getCode() == KeyCode.ENTER) {
-        doLogin(userField.getText(), passwordField.getText(), twoFactorField.getText());
+        doLogin(userField.getText(), passwordField.getText(), twoFactorField.getText(),
+            rememberCheckBox.isSelected());
       }
     };
     userField.setOnKeyReleased(enterEventHandler);
     passwordField.setOnKeyReleased(enterEventHandler);
     twoFactorField.setOnKeyReleased(enterEventHandler);
     loginButton.setOnAction(
-        event -> doLogin(userField.getText(), passwordField.getText(), twoFactorField.getText()));
+        event -> doLogin(userField.getText(), passwordField.getText(), twoFactorField.getText(),
+            rememberCheckBox.isSelected()));
   }
 
-  private void doLogin(final String user, final String password, final String code) {
+  private void doLogin(final String user, final String password, final String code,
+      final boolean createToken) {
     // disable UI
     progressSpinner.setVisible(true);
     setDisabled(true);
 
     // call the login procedure
-    onLogin.accept(user, password, code);
+    onLogin.accept(user, password, code, createToken);
   }
 
-  void displayTwoFactorDialog() {
+  void displayTwoFactorCode() {
     twoFactorCodeLabel.setVisible(true);
     twoFactorCodeLabel.setDisable(false);
     twoFactorField.setVisible(true);
@@ -154,27 +166,45 @@ public class LoginView extends GridPane {
     progressSpinner.setVisible(false);
     setDisabled(false);
     twoFactorField.requestFocus();
-    Platform.runLater(() -> showTooltip(twoFactorField, "2-Factor Authentication Code Required"));
+    Platform.runLater(() -> showTooltip(twoFactorField,
+        "2-Factor Authentication Code Required", () -> {
+        }));
   }
 
   void displayInvalidCredentials() {
-    displayUnexpectedError("Invalid credentials");
+    displayErrorMessage("Invalid credentials", () -> {
+    });
     passwordField.requestFocus();
   }
 
   void displayUnexpectedError(final String message) {
+    displayErrorMessage(message, () -> {
+    });
+  }
+
+  void displayTokenExists() {
+    displayErrorMessage("There's already an existent token." + System.lineSeparator() +
+            "Please delete it and login again." + System.lineSeparator() + System.lineSeparator() +
+            "Go to a https://github.com/settings/tokens",
+        () -> urlOpener.accept("https://github.com/settings/tokens"));
+  }
+
+  private void displayErrorMessage(final String message, final Runnable onClick) {
     twoFactorField.clear();
     progressSpinner.setVisible(false);
     setDisabled(false);
-    showTooltip(passwordField, message);
+    showTooltip(passwordField, message, onClick);
   }
 
-  private void showTooltip(final Node container, final String message) {
+  private void showTooltip(final Node container, final String message, final Runnable onClick) {
     if (message != null && !message.isEmpty()) {
       final HBox content = new HBox();
-      content.getChildren().add(new Label(message));
+      final Label label = new Label(message);
+      content.getChildren().add(label);
       content.setPadding(new Insets(5));
       content.setAlignment(Pos.CENTER);
+      content.setOnMouseReleased(e -> onClick.run());
+      content.setOnTouchReleased(e -> onClick.run());
       PopOver popOver = new PopOver(content);
       popOver.setFadeInDuration(Duration.millis(500));
       popOver.setFadeOutDuration(Duration.millis(500));

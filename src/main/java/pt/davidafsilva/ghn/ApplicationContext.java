@@ -2,10 +2,13 @@ package pt.davidafsilva.ghn;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.stage.Stage;
 import pt.davidafsilva.ghn.model.User;
-import pt.davidafsilva.ghn.service.GitHubAuthService;
 import pt.davidafsilva.ghn.service.GitHubService;
+import pt.davidafsilva.ghn.service.auth.GitHubAuthService;
+import pt.davidafsilva.ghn.service.options.ApplicationOptionsService;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
@@ -14,23 +17,29 @@ import reactor.core.scheduler.Schedulers;
  */
 public class ApplicationContext {
 
+  private final Application application;
   private final Stage primaryStage;
-  private final ApplicationOptions options;
   private final AtomicReference<User> user = new AtomicReference<>();
+  private final ApplicationOptionsService applicationOptionsService;
   private final GitHubAuthService gitHubAuthService;
   private final GitHubService gitHubService;
   private final Scheduler workScheduler;
 
-  ApplicationContext(final Stage primaryStage, final ApplicationOptions options) {
+  ApplicationContext(final Application application, final Stage primaryStage) {
+    this.application = application;
     this.primaryStage = primaryStage;
-    this.options = options;
-    this.gitHubAuthService = new GitHubAuthService(options);
+    this.applicationOptionsService = new ApplicationOptionsService();
     this.gitHubService = new GitHubService(this);
+    this.gitHubAuthService = new GitHubAuthService(applicationOptionsService.getOptions());
     this.workScheduler = Schedulers.newElastic("ghn");
   }
 
+  public HostServices getHostServices() {
+    return application.getHostServices();
+  }
+
   public ApplicationOptions getOptions() {
-    return options;
+    return applicationOptionsService.getOptions();
   }
 
   public User getUser() {
@@ -47,6 +56,10 @@ public class ApplicationContext {
 
   public GitHubService getGitHubService() {
     return gitHubService;
+  }
+
+  public ApplicationOptionsService getApplicationOptionsService() {
+    return applicationOptionsService;
   }
 
   public Stage getPrimaryStage() {

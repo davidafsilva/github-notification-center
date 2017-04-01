@@ -2,6 +2,7 @@ package pt.davidafsilva.ghn;
 
 import javax.swing.*;
 
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -17,15 +18,15 @@ public class ApplicationController {
 
   private final ApplicationContext ctx;
 
-  private ApplicationController(final Stage primaryStage) {
-    this.ctx = new ApplicationContext(primaryStage, new ApplicationOptions());
+  private ApplicationController(final Application application, final Stage primaryStage) {
+    this.ctx = new ApplicationContext(application, primaryStage);
   }
 
   public ApplicationContext getApplicationContext() {
     return ctx;
   }
 
-  static void start(final Stage primaryStage) {
+  static void start(final Application application, final Stage primaryStage) {
     primaryStage.setTitle("GitHub Notification Center");
     primaryStage.initStyle(StageStyle.UTILITY);
     primaryStage.setOnCloseRequest(e -> {
@@ -34,7 +35,7 @@ public class ApplicationController {
     });
     setIcons(primaryStage);
 
-    final ApplicationController appController = new ApplicationController(primaryStage);
+    final ApplicationController appController = new ApplicationController(application, primaryStage);
     appController.showLoginView(primaryStage);
   }
 

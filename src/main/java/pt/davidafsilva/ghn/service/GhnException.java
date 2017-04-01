@@ -5,7 +5,7 @@ package pt.davidafsilva.ghn.service;
  */
 public class GhnException extends Exception {
 
-  GhnException(final String message, final Throwable e) {
+  public GhnException(final String message, final Throwable e) {
     super(message, e);
   }
 }

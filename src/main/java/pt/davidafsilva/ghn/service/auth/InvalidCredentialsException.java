@@ -1,4 +1,6 @@
-package pt.davidafsilva.ghn.service;
+package pt.davidafsilva.ghn.service.auth;
+
+import pt.davidafsilva.ghn.service.GhnException;
 
 /**
  * @author david

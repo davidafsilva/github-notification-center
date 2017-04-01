@@ -6,6 +6,6 @@ package pt.davidafsilva.ghn.service;
 public final class UnauthorizedRequestException extends Exception {
 
   UnauthorizedRequestException(final Throwable e) {
-    super(e);
+    super("Session expired", e);
   }
 }

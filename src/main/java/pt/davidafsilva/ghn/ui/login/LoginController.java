@@ -5,10 +5,14 @@ import java.time.Duration;
 import javafx.application.Platform;
 import pt.davidafsilva.ghn.ApplicationContext;
 import pt.davidafsilva.ghn.ApplicationController;
+import pt.davidafsilva.ghn.ApplicationOptions;
+import pt.davidafsilva.ghn.model.User;
 import pt.davidafsilva.ghn.service.GhnException;
-import pt.davidafsilva.ghn.service.GitHubAuthService;
-import pt.davidafsilva.ghn.service.InvalidCredentialsException;
-import pt.davidafsilva.ghn.service.TwoFactorAuthRequiredException;
+import pt.davidafsilva.ghn.service.auth.GitHubAuthService;
+import pt.davidafsilva.ghn.service.auth.InvalidCredentialsException;
+import pt.davidafsilva.ghn.service.auth.TokenExistsException;
+import pt.davidafsilva.ghn.service.auth.TwoFactorAuthRequiredException;
+import reactor.core.publisher.Mono;
 
 /**
  * @author david
@@ -24,8 +28,8 @@ public class LoginController {
     this.appContext = appController.getApplicationContext();
     this.loginView = new LoginView(
         this::doLogin,
-        appController::exit
-    );
+        appController::exit,
+        appContext.getHostServices()::showDocument);
   }
 
   public LoginView initView() {
@@ -34,13 +38,35 @@ public class LoginController {
     return loginView;
   }
 
-  private void doLogin(final String username, final String password, final String code) {
+  private void doLogin(final String username, final String password, final String code,
+      final boolean createToken) {
     final GitHubAuthService authService = appContext.getGitHubAuthService();
-    authService.loginWithPassword(username, password, code)
+    final Mono<User> authProcedure;
+    if (!createToken) {
+      // do the login
+      authProcedure = authService.loginWithPassword(username, password, code);
+    } else {
+      // create the token and login
+      authProcedure = authService.createToken(username, password, code)
+          .filter(s -> s != null && !s.isEmpty())
+          .doOnError(TokenExistsException.class,
+              t -> Platform.runLater(loginView::displayTokenExists))
+          .doOnSuccess(token -> {
+            // save token
+            final ApplicationOptions options = appContext.getOptions();
+            options.setToken(token);
+            appContext.getApplicationOptionsService().save(options);
+          })
+          .flatMap(token -> authService.loginWithToken(username, token))
+          .next();
+    }
+
+    // proceed with the login
+    authProcedure
         .timeout(Duration.ofSeconds(15))
         .log()
         .doOnError(TwoFactorAuthRequiredException.class,
-            t -> Platform.runLater(loginView::displayTwoFactorDialog))
+            t -> Platform.runLater(loginView::displayTwoFactorCode))
         .doOnError(InvalidCredentialsException.class,
             t -> Platform.runLater(loginView::displayInvalidCredentials))
         .doOnError(t -> !GhnException.class.isInstance(t),
