@@ -62,7 +62,7 @@ public class LoginController {
   }
 
   private boolean isToken(final String credential) {
-    return credential.length() == 64;
+    return credential.length() == 40;
   }
 
   private Mono<String> createToken(final String username, final String password,
