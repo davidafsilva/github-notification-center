@@ -28,7 +28,6 @@ public class ApplicationController {
 
   static void start(final Application application, final Stage primaryStage) {
     primaryStage.setTitle("GitHub Notification Center");
-    primaryStage.initStyle(StageStyle.UTILITY);
     primaryStage.setOnCloseRequest(e -> {
       Platform.exit();
       System.exit(0);
