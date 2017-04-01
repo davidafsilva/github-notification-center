@@ -74,8 +74,8 @@ public class GitHubAuthService {
         .mapError(this::isTokenAlreadyCreated, TokenExistsException::new)
         .filter(r -> r.status() == HttpResponseStatus.CREATED)
         .flatMap(this::decodeJson)
-        .filter(json -> json.has("hashed_token"))
-        .map(json -> json.get("hashed_token").asText())
+        .filter(json -> json.has("token"))
+        .map(json -> json.get("token").asText())
         .next();
   }
 
