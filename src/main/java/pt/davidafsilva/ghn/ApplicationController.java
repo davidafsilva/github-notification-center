@@ -7,7 +7,6 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import pt.davidafsilva.ghn.ui.login.LoginController;
 import pt.davidafsilva.ghn.ui.login.LoginView;
 
@@ -28,10 +27,6 @@ public class ApplicationController {
 
   static void start(final Application application, final Stage primaryStage) {
     primaryStage.setTitle("GitHub Notification Center");
-    primaryStage.setOnCloseRequest(e -> {
-      Platform.exit();
-      System.exit(0);
-    });
     setIcons(primaryStage);
 
     final ApplicationController appController = new ApplicationController(application, primaryStage);
@@ -40,14 +35,14 @@ public class ApplicationController {
 
   private static void setIcons(final Stage primaryStage) {
     final Image icon = new Image(ApplicationController.class
-        .getResourceAsStream("/github-icon.png"));
+        .getResourceAsStream("/ghnc-64.png"));
     primaryStage.getIcons().add(icon);
 
     // OS X dock icon
     try {
       Class.forName("com.apple.eawt.Application");
       com.apple.eawt.Application.getApplication().setDockIconImage(
-          new ImageIcon(ApplicationController.class.getResource("/github-icon.png")).getImage());
+          new ImageIcon(ApplicationController.class.getResource("/ghnc-256.png")).getImage());
     } catch (ClassNotFoundException e) {
       // not applicable to windows/linux
     }
@@ -71,10 +66,7 @@ public class ApplicationController {
   }
 
   public void exit() {
-    Platform.runLater(() -> {
-      ctx.getWorkScheduler().dispose();
-      ctx.getPrimaryStage().close();
-      System.exit(0);
-    });
+    ctx.getWorkScheduler().dispose();
+    Platform.exit();
   }
 }

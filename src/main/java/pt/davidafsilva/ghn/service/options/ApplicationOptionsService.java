@@ -17,21 +17,12 @@ public class ApplicationOptionsService {
 
   private static final Logger LOGGER = Logger.getLogger(ApplicationOptionsService.class.getName());
   private static final String HOME = System.getProperty("user.home");
-  private static final String COMMENT = "GHN Hub configuration";
+  private static final String COMMENT = "GHN Center configuration";
 
   private final ApplicationOptions options;
 
-  {
-    final Properties p = new Properties();
-    try {
-      final Path configFile = getFileLocation();
-      if (Files.exists(configFile)) {
-        p.load(Files.newInputStream(configFile));
-      }
-    } catch (final IOException e) {
-      LOGGER.log(Level.WARNING, "unable to read application properties: " + e.getMessage());
-    }
-    options = new ApplicationOptions(p);
+  public ApplicationOptionsService() {
+    options = new ApplicationOptions(load());
   }
 
   public ApplicationOptions getOptions() {
@@ -45,6 +36,19 @@ public class ApplicationOptionsService {
     } catch (final IOException e) {
       LOGGER.log(Level.WARNING, "unable to save application properties");
     }
+  }
+
+  private Properties load() {
+    final Properties p = new Properties();
+    try {
+      final Path configFile = getFileLocation();
+      if (Files.exists(configFile)) {
+        p.load(Files.newInputStream(configFile));
+      }
+    } catch (final IOException e) {
+      LOGGER.log(Level.WARNING, "unable to read application properties: " + e.getMessage());
+    }
+    return p;
   }
 
   private Path getFileLocation() {

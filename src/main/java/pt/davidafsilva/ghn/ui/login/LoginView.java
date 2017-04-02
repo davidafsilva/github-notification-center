@@ -66,7 +66,7 @@ public class LoginView extends GridPane {
 
     // logo
     final Label logoLabel = new Label("", new ImageView(
-        new Image(getClass().getResourceAsStream("/github-icon-128x128.png"))));
+        new Image(getClass().getResourceAsStream("/ghnc-128.png"))));
     final HBox logoContainer = new HBox(logoLabel);
     logoContainer.setAlignment(Pos.CENTER);
     add(logoContainer, 1, 0, 3, 1);
@@ -157,7 +157,7 @@ public class LoginView extends GridPane {
     }
   }
 
-  private void doLogin(final String user, final String password, final String code,
+  void doLogin(final String user, final String password, final String code,
       final boolean createToken) {
     // disable UI
     progressSpinner.setVisible(true);
@@ -180,6 +180,7 @@ public class LoginView extends GridPane {
 
   void displayInvalidCredentials() {
     displayErrorMessage(new Label("Invalid credentials"));
+    passwordField.clear();
     passwordField.requestFocus();
   }
 
