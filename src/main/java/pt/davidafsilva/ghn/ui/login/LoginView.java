@@ -233,6 +233,7 @@ public class LoginView extends GridPane {
       loginForm.getChildren().remove(twoFactorCodeLabel);
       loginForm.getChildren().remove(twoFactorField);
     }
+    rememberCheckBox.setSelected(false);
 
     progressSpinner.setVisible(false);
     setDisabled(false);
