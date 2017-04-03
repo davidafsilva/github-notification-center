@@ -7,7 +7,7 @@
 
 .ghn-button-exit {
     -jfx-button-type: RAISED;
-    -fx-background-color: rgb(219,137,137);
+    -fx-background-color: rgb(221,113,92);
     -fx-pref-width: 60;
     -fx-text-fill: WHITE;
 }
