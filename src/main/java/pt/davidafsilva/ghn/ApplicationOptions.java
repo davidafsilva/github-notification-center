@@ -14,7 +14,8 @@ public final class ApplicationOptions {
   private static final String DEFAULT_GITHUB_HOST = "api.github.com";
   private static final String GITHUB_PORT = "github.port";
   private static final String DEFAULT_GITHUB_PORT = "443";
-  private static final String GITHUB_AUTH_TOKEN = "github.token";
+
+  public static final String GITHUB_AUTH_TOKEN = "github.token";
 
   private final Properties p;
 

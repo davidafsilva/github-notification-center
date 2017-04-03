@@ -53,8 +53,10 @@ public class LoginController {
           authService.loginWithPassword(username, password, code);
     } else {
       // create the token and login
-      authProcedure = createToken(username, password, code)
-          .then(authService::loginWithToken);
+      authProcedure = isToken(password) ?
+          authService.loginWithToken(password).then(user -> Mono.just(user)
+              .doOnNext(u -> saveToken(u.getCredentials().orElse(null)))) :
+          createToken(username, password, code).then(authService::loginWithToken);
     }
 
     // proceed with the login
@@ -75,9 +77,7 @@ public class LoginController {
         .doOnSuccess(token -> {
           LOGGER.log(Level.INFO, "token was created");
           // save token
-          final ApplicationOptions options = appContext.getOptions();
-          options.setToken(token);
-          appContext.getApplicationOptionsService().save(options);
+          saveToken(token);
         });
   }
 
@@ -101,5 +101,11 @@ public class LoginController {
         })
         .subscribeOn(appContext.getWorkScheduler())
         .subscribe();
+  }
+
+  private void saveToken(final String token) {
+    final ApplicationOptions options = appContext.getOptions();
+    options.setToken(token);
+    appContext.getApplicationOptionsService().save(options);
   }
 }
