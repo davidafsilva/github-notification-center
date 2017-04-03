@@ -57,6 +57,7 @@ public class ApplicationController {
     scene.getStylesheets().add(ApplicationController.class.getResource("/app.css")
         .toExternalForm());
     stage.setScene(scene);
+    stage.setOnShown(event -> ctx.getOptions().getToken().ifPresent(loginController::autoLogin));
     stage.show();
   }
 

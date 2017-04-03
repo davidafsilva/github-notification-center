@@ -157,14 +157,16 @@ public class LoginView extends GridPane {
     }
   }
 
-  void doLogin(final String user, final String password, final String code,
+  private void doLogin(final String user, final String password, final String code,
       final boolean createToken) {
+    // call the login procedure
+    onLogin.accept(user, password, code, createToken);
+  }
+
+  void setLoggingIn() {
     // disable UI
     progressSpinner.setVisible(true);
     setDisabled(true);
-
-    // call the login procedure
-    onLogin.accept(user, password, code, createToken);
   }
 
   void displayTwoFactorCode() {

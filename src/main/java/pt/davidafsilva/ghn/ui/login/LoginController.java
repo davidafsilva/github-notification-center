@@ -42,6 +42,11 @@ public class LoginController {
     return loginView;
   }
 
+  public void autoLogin(final String token) {
+    Platform.runLater(loginView::setLoggingIn);
+    doLogin(null, token, null, false);
+  }
+
   private void doLogin(final String username, final String password, final String code,
       final boolean createToken) {
     final GitHubAuthService authService = appContext.getGitHubAuthService();
@@ -84,7 +89,6 @@ public class LoginController {
   private void loginWith(final Mono<User> authProcedure) {
     authProcedure
         .timeout(Duration.ofSeconds(15))
-        .log()
         .doOnError(TwoFactorAuthRequiredException.class,
             t -> Platform.runLater(loginView::displayTwoFactorCode))
         .doOnError(InvalidCredentialsException.class,
