@@ -16,6 +16,8 @@ import pt.davidafsilva.ghn.service.auth.TokenExistsException;
 import pt.davidafsilva.ghn.service.auth.TwoFactorAuthRequiredException;
 import reactor.core.publisher.Mono;
 
+import static pt.davidafsilva.ghn.util.AuthorizationFacility.isToken;
+
 /**
  * @author david
  */
@@ -60,16 +62,12 @@ public class LoginController {
       // create the token and login
       authProcedure = isToken(password) ?
           authService.loginWithToken(password).then(user -> Mono.just(user)
-              .doOnNext(u -> saveToken(u.getCredentials().orElse(null)))) :
+              .doOnNext(u -> saveToken(u.getCredentials()))) :
           createToken(username, password, code).then(authService::loginWithToken);
     }
 
     // proceed with the login
     loginWith(authProcedure);
-  }
-
-  private boolean isToken(final String credential) {
-    return credential.length() == 40;
   }
 
   private Mono<String> createToken(final String username, final String password,

@@ -26,8 +26,8 @@ public class User {
     return Optional.ofNullable(avatarUrl);
   }
 
-  public Optional<String> getCredentials() {
-    return Optional.ofNullable(credentials);
+  public String getCredentials() {
+    return credentials;
   }
 
   @Override

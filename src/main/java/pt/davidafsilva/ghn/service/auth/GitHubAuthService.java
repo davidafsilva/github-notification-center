@@ -8,9 +8,6 @@ import org.reactivestreams.Publisher;
 
 import java.io.IOException;
 import java.io.SequenceInputStream;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -28,6 +25,7 @@ import reactor.ipc.netty.http.client.HttpClientResponse;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.AUTHORIZATION;
 import static io.netty.handler.codec.http.HttpHeaderNames.USER_AGENT;
+import static pt.davidafsilva.ghn.util.AuthorizationFacility.createHeaderValueFor;
 
 /**
  * @author david
@@ -45,6 +43,7 @@ public class GitHubAuthService {
   private static final String LOGIN_URL_PATH = "/user";
   private static final String TOKEN_URL_PATH = "/authorizations";
   private static final String GRAVATAR_URL = "https://www.gravatar.com/";
+  private static final String GITHUB_OTP_HEADER = "X-GitHub-OTP";
 
   // properties
   private final HttpClient client;
@@ -137,7 +136,7 @@ public class GitHubAuthService {
 
   private HttpClientRequest addOtpHeader(final HttpClientRequest request, final String code) {
     return Mono.justOrEmpty(code)
-        .map(c -> request.header("X-GitHub-OTP", c))
+        .map(c -> request.header(GITHUB_OTP_HEADER, c))
         .defaultIfEmpty(request)
         .block();
   }
@@ -148,14 +147,12 @@ public class GitHubAuthService {
 
   private HttpClientRequest addBasicAuthorization(final HttpClientRequest request,
       final String user, final String password) {
-    final ByteBuffer buf = StandardCharsets.ISO_8859_1.encode(user + ':' + password);
-    final String encoded = Base64.getEncoder().encodeToString(buf.array());
-    return request.header(AUTHORIZATION, "basic " + encoded);
+    return request.header(AUTHORIZATION, createHeaderValueFor(user, password));
   }
 
   private HttpClientRequest addTokenAuthorization(final HttpClientRequest request,
       final String token) {
-    return request.header(AUTHORIZATION, "token " + token);
+    return request.header(AUTHORIZATION, createHeaderValueFor(token));
   }
 
   private boolean isTokenAlreadyCreated(final Throwable throwable) {
@@ -178,7 +175,7 @@ public class GitHubAuthService {
   private boolean is2FactorRequired(final Throwable throwable) {
     if (HttpClientException.class.isInstance(throwable)) {
       final HttpClientException httpClientException = (HttpClientException) throwable;
-      final String otpHeader = httpClientException.headers().get("X-GitHub-OTP", "");
+      final String otpHeader = httpClientException.headers().get(GITHUB_OTP_HEADER, "");
       return otpHeader.startsWith("required");
     }
     return false;

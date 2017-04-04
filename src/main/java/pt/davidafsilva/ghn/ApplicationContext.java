@@ -6,7 +6,7 @@ import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.stage.Stage;
 import pt.davidafsilva.ghn.model.User;
-import pt.davidafsilva.ghn.service.GitHubService;
+import pt.davidafsilva.ghn.service.notification.GitHubNotificationService;
 import pt.davidafsilva.ghn.service.auth.GitHubAuthService;
 import pt.davidafsilva.ghn.service.options.ApplicationOptionsService;
 import reactor.core.scheduler.Scheduler;
@@ -22,14 +22,14 @@ public class ApplicationContext {
   private final AtomicReference<User> user = new AtomicReference<>();
   private final ApplicationOptionsService applicationOptionsService;
   private final GitHubAuthService gitHubAuthService;
-  private final GitHubService gitHubService;
+  private final GitHubNotificationService gitHubNotificationService;
   private final Scheduler workScheduler;
 
   ApplicationContext(final Application application, final Stage primaryStage) {
     this.application = application;
     this.primaryStage = primaryStage;
     this.applicationOptionsService = new ApplicationOptionsService();
-    this.gitHubService = new GitHubService(this);
+    this.gitHubNotificationService = new GitHubNotificationService(this);
     this.gitHubAuthService = new GitHubAuthService(applicationOptionsService.getOptions());
     this.workScheduler = Schedulers.newElastic("ghn");
   }
@@ -54,8 +54,8 @@ public class ApplicationContext {
     return gitHubAuthService;
   }
 
-  public GitHubService getGitHubService() {
-    return gitHubService;
+  public GitHubNotificationService getGitHubNotificationService() {
+    return gitHubNotificationService;
   }
 
   public ApplicationOptionsService getApplicationOptionsService() {

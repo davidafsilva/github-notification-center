@@ -1,4 +1,4 @@
-package pt.davidafsilva.ghn.service;
+package pt.davidafsilva.ghn.service.notification;
 
 /**
  * @author david
