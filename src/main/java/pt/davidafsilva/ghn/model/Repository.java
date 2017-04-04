@@ -1,5 +1,7 @@
 package pt.davidafsilva.ghn.model;
 
+import java.util.Objects;
+
 /**
  * @author david
  */
@@ -56,6 +58,39 @@ public class Repository {
 
   public String getHtmlUrl() {
     return htmlUrl;
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    final Repository that = (Repository) o;
+    return Objects.equals(id, that.id) &&
+        Objects.equals(owner, that.owner) &&
+        Objects.equals(name, that.name);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, owner, name);
+  }
+
+  @Override
+  public String toString() {
+    return "Repository{" +
+        "id=" + id +
+        ", owner=" + owner +
+        ", name='" + name + '\'' +
+        ", description='" + description + '\'' +
+        ", isPrivate=" + isPrivate +
+        ", fork=" + fork +
+        ", url='" + url + '\'' +
+        ", htmlUrl='" + htmlUrl + '\'' +
+        '}';
   }
 
   public static class Builder {

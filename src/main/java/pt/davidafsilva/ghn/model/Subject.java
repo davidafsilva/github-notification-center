@@ -1,5 +1,7 @@
 package pt.davidafsilva.ghn.model;
 
+import java.util.Objects;
+
 /**
  * @author david
  */
@@ -32,6 +34,35 @@ public final class Subject {
 
   public String getType() {
     return type;
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    final Subject subject = (Subject) o;
+    return Objects.equals(title, subject.title) &&
+        Objects.equals(url, subject.url) &&
+        Objects.equals(type, subject.type);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(title, url, type);
+  }
+
+  @Override
+  public String toString() {
+    return "Subject{" +
+        "title='" + title + '\'' +
+        ", url='" + url + '\'' +
+        ", latestCommentUrl='" + latestCommentUrl + '\'' +
+        ", type='" + type + '\'' +
+        '}';
   }
 
   public class Builder {

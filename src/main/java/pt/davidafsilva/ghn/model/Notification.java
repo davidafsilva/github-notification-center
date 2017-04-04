@@ -1,6 +1,7 @@
 package pt.davidafsilva.ghn.model;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * @author david
@@ -59,6 +60,39 @@ public final class Notification {
 
   public String getUrl() {
     return url;
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    final Notification that = (Notification) o;
+    return Objects.equals(id, that.id) &&
+        Objects.equals(repository, that.repository) &&
+        Objects.equals(subject, that.subject);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, repository, subject);
+  }
+
+  @Override
+  public String toString() {
+    return "Notification{" +
+        "id=" + id +
+        ", repository=" + repository +
+        ", subject=" + subject +
+        ", reason='" + reason + '\'' +
+        ", unread=" + unread +
+        ", updatedAt=" + updatedAt +
+        ", lastReadAt=" + lastReadAt +
+        ", url='" + url + '\'' +
+        '}';
   }
 
   public class Builder {
