@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.reactivestreams.Publisher;
 
+import java.io.SequenceInputStream;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -77,7 +78,10 @@ public class GitHubNotificationService {
   }
 
   private Flux<Notification> mapNotificationFromResponse(final HttpClientResponse response) {
-    return response.receive().asInputStream()
+    return response
+        .receive()
+        .asInputStream()
+        .reduce(SequenceInputStream::new)
         .map(in -> wrap(() -> objectMapper.readerFor(Notification.class)
             .<Notification>readValues(in)))
         .flatMap(iterator -> subscriber -> {
