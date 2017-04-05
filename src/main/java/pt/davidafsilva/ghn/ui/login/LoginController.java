@@ -1,6 +1,7 @@
 package pt.davidafsilva.ghn.ui.login;
 
 import java.time.Duration;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -86,7 +87,10 @@ public class LoginController {
 
   private void loginWith(final Mono<User> authProcedure) {
     authProcedure
-        .timeout(Duration.ofSeconds(15))
+        .timeout(Duration.ofSeconds(30))
+        .doOnError(TimeoutException.class,
+            t -> Platform.runLater(() -> loginView.displayUnexpectedError(
+                "Request timed out." + System.lineSeparator() + "Please try again later.")))
         .doOnError(TwoFactorAuthRequiredException.class,
             t -> Platform.runLater(loginView::displayTwoFactorCode))
         .doOnError(InvalidCredentialsException.class,
