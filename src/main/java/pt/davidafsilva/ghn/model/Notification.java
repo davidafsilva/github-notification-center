@@ -95,7 +95,7 @@ public final class Notification {
         '}';
   }
 
-  public class Builder {
+  public static class Builder {
 
     private Long id;
     private Repository repository;
@@ -111,13 +111,13 @@ public final class Notification {
       return this;
     }
 
-    public Builder setRepository(final Repository repository) {
-      this.repository = repository;
+    public Builder setRepository(final Repository.Builder repository) {
+      this.repository = repository.build();
       return this;
     }
 
-    public Builder setSubject(final Subject subject) {
-      this.subject = subject;
+    public Builder setSubject(final Subject.Builder subject) {
+      this.subject = subject.build();
       return this;
     }
 

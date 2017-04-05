@@ -109,8 +109,8 @@ public class Repository {
       return this;
     }
 
-    public Builder setOwner(final Owner owner) {
-      this.owner = owner;
+    public Builder setOwner(final Owner.Builder owner) {
+      this.owner = owner.build();
       return this;
     }
 

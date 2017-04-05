@@ -65,7 +65,7 @@ public final class Subject {
         '}';
   }
 
-  public class Builder {
+  public static class Builder {
 
     private String title;
     private String url;
