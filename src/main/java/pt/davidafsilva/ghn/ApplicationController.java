@@ -29,7 +29,8 @@ public class ApplicationController {
     primaryStage.setTitle("GitHub Notification Center");
     setIcons(primaryStage);
 
-    final ApplicationController appController = new ApplicationController(application, primaryStage);
+    final ApplicationController appController = new ApplicationController(application,
+        primaryStage);
     appController.showLoginView(primaryStage);
   }
 

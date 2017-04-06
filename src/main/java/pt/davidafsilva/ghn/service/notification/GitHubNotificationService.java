@@ -9,7 +9,6 @@ import org.reactivestreams.Publisher;
 
 import java.io.IOException;
 import java.io.SequenceInputStream;
-import java.time.LocalDateTime;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.StreamSupport;
@@ -34,24 +33,20 @@ public class GitHubNotificationService extends AbstractGitHubService {
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   private static final String NOTIFICATIONS_PATH = "/notifications";
 
-  private final String url;
+  private final String baseUrl;
   private final ApplicationContext context;
   private final HttpClient client;
 
   public GitHubNotificationService(final ApplicationContext context) {
     this.context = context;
     this.client = HttpClient.create(opt -> opt.sslSupport().disablePool());
-    this.url = context.getOptions().getGitHubScheme() + "://" +
+    this.baseUrl = context.getOptions().getGitHubScheme() + "://" +
         context.getOptions().getGitHubHost() + ":" +
         context.getOptions().getGitHubPort() + NOTIFICATIONS_PATH;
   }
 
-  public Flux<Notification> getAllNotifications() {
-    return getAllNotifications(null, null);
-  }
-
-  public Flux<Notification> getAllNotifications(final LocalDateTime from, final LocalDateTime to) {
-    return client.get(url, request -> sendRequest(request, from, to))
+  public Flux<Notification> getNotifications(final NotificationFilter filter) {
+    return client.get(filter.addParametersTo(baseUrl), this::sendRequest)
         .mapError(this::isUnauthorizedOrForbidden, UnauthorizedRequestException::new)
         .filter(r -> r.status() == HttpResponseStatus.OK)
         .flatMap(this::unmarshall);
@@ -61,8 +56,7 @@ public class GitHubNotificationService extends AbstractGitHubService {
   // Utility methods
   // -----------------
 
-  private Publisher<Void> sendRequest(final HttpClientRequest request, final LocalDateTime from,
-      final LocalDateTime to) {
+  private Publisher<Void> sendRequest(final HttpClientRequest request) {
     return Mono.just(request)
         .map(this::addUserAgent)
         .map(this::addAcceptHeeader)
