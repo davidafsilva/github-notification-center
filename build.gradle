@@ -22,6 +22,8 @@ dependencies {
     compile 'io.projectreactor.ipc:reactor-netty:0.6.2.RELEASE'
     compile 'com.fasterxml.jackson.core:jackson-core:2.8.7'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.8.7'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.8.7'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.7'
     compile 'com.jfoenix:jfoenix:1.0.0'
     compile 'org.controlsfx:controlsfx:8.40.12'
 

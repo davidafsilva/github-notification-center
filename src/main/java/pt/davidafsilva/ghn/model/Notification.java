@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * @author david
  */
-public final class Notification {
+public final class Notification extends AbstractModel {
 
   private final Long id;
   private final Repository repository;
@@ -79,20 +79,6 @@ public final class Notification {
   @Override
   public int hashCode() {
     return Objects.hash(id, repository, subject);
-  }
-
-  @Override
-  public String toString() {
-    return "Notification{" +
-        "id=" + id +
-        ", repository=" + repository +
-        ", subject=" + subject +
-        ", reason='" + reason + '\'' +
-        ", unread=" + unread +
-        ", updatedAt=" + updatedAt +
-        ", lastReadAt=" + lastReadAt +
-        ", url='" + url + '\'' +
-        '}';
   }
 
   public static class Builder {

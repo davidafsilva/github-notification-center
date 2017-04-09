@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * @author david
  */
-public final class Subject {
+public final class Subject extends AbstractModel {
 
   private String title;
   private String url;
@@ -53,16 +53,6 @@ public final class Subject {
   @Override
   public int hashCode() {
     return Objects.hash(title, url, type);
-  }
-
-  @Override
-  public String toString() {
-    return "Subject{" +
-        "title='" + title + '\'' +
-        ", url='" + url + '\'' +
-        ", latestCommentUrl='" + latestCommentUrl + '\'' +
-        ", type='" + type + '\'' +
-        '}';
   }
 
   public static class Builder {

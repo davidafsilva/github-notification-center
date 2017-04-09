@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * @author david
  */
-public class Repository {
+public class Repository extends AbstractModel {
 
   private final Long id;
   private final Owner owner;
@@ -77,20 +77,6 @@ public class Repository {
   @Override
   public int hashCode() {
     return Objects.hash(id, owner, name);
-  }
-
-  @Override
-  public String toString() {
-    return "Repository{" +
-        "id=" + id +
-        ", owner=" + owner +
-        ", name='" + name + '\'' +
-        ", description='" + description + '\'' +
-        ", isPrivate=" + isPrivate +
-        ", fork=" + fork +
-        ", url='" + url + '\'' +
-        ", htmlUrl='" + htmlUrl + '\'' +
-        '}';
   }
 
   public static class Builder {

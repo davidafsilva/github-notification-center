@@ -6,7 +6,7 @@ import java.util.Optional;
 /**
  * @author david
  */
-public class User {
+public class User extends AbstractModel {
 
   private final String username;
   private final String credentials;
@@ -45,13 +45,5 @@ public class User {
   @Override
   public int hashCode() {
     return Objects.hash(username);
-  }
-
-  @Override
-  public String toString() {
-    return "User{" +
-        "username='" + username + '\'' +
-        ", avatarUrl='" + avatarUrl + '\'' +
-        '}';
   }
 }

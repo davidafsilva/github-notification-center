@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * @author david
  */
-public class Owner {
+public class Owner extends AbstractModel {
 
   private final Long id;
   private final String login;
@@ -64,18 +64,6 @@ public class Owner {
   @Override
   public int hashCode() {
     return Objects.hash(id, login);
-  }
-
-  @Override
-  public String toString() {
-    return "Owner{" +
-        "id=" + id +
-        ", login='" + login + '\'' +
-        ", avatarUrl='" + avatarUrl + '\'' +
-        ", gravatarId='" + gravatarId + '\'' +
-        ", url='" + url + '\'' +
-        ", htmlUrl='" + htmlUrl + '\'' +
-        '}';
   }
 
   public static class Builder {
