@@ -1,19 +1,27 @@
 package pt.davidafsilva.ghn;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import javax.swing.*;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import pt.davidafsilva.ghn.ui.login.LoginController;
 import pt.davidafsilva.ghn.ui.login.LoginView;
+import pt.davidafsilva.ghn.ui.main.NotificationsController;
+import pt.davidafsilva.ghn.ui.main.NotificationsView;
 
 /**
  * @author david
  */
 public class ApplicationController {
+
+  private static final AtomicReference<ApplicationController> CONTROLLER = new AtomicReference<>();
 
   private final ApplicationContext ctx;
 
@@ -31,7 +39,12 @@ public class ApplicationController {
 
     final ApplicationController appController = new ApplicationController(application,
         primaryStage);
+    CONTROLLER.set(appController);
     appController.showLoginView(primaryStage);
+  }
+
+  static void stop() {
+    CONTROLLER.get().exit();
   }
 
   private static void setIcons(final Stage primaryStage) {
@@ -63,8 +76,25 @@ public class ApplicationController {
   }
 
   public void showMainView() {
-    // TODO: change me - auto-generated block
+    final Stage stage = ctx.getPrimaryStage();
 
+    // close login view
+    stage.close();
+
+    // create notifications view
+    final NotificationsController controller = new NotificationsController(this);
+    final NotificationsView view = controller.initView();
+
+    // open main view
+    final Rectangle2D screenResolution = Screen.getPrimary().getVisualBounds();
+    final double width = screenResolution.getWidth() * .65;
+    final double height = screenResolution.getHeight() * .70;
+    final Scene scene = new Scene(view, width, height);
+    scene.getStylesheets().add(ApplicationController.class.getResource("/app.css")
+        .toExternalForm());
+    stage.setScene(scene);
+    stage.setOnShown(e -> controller.loadNotifications());
+    stage.show();
   }
 
   public void exit() {

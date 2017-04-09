@@ -4,6 +4,9 @@ package pt.davidafsilva.ghn.service.notification;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import org.reactivestreams.Publisher;
 
@@ -29,8 +32,11 @@ import reactor.ipc.netty.http.client.HttpClientResponse;
  */
 public class GitHubNotificationService extends AbstractGitHubService {
 
-  private final ObjectMapper objectMapper = new ObjectMapper()
-      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  private static final ObjectMapper MAPPER = new ObjectMapper()
+      .registerModule(new JavaTimeModule())
+      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+      .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+
   private static final String NOTIFICATIONS_PATH = "/notifications";
 
   private final String baseUrl;
@@ -72,8 +78,8 @@ public class GitHubNotificationService extends AbstractGitHubService {
         .reduce(SequenceInputStream::new)
         .map(in -> {
           try {
-            return objectMapper.readerFor(Notification.Builder.class)
-                .<Notification.Builder>readValues(in);
+            final ObjectReader reader = MAPPER.readerFor(Notification.Builder.class);
+            return reader.<Notification.Builder>readValues(in);
           } catch (final IOException e) {
             throw Exceptions.propagate(e);
           } finally {

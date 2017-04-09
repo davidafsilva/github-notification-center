@@ -21,4 +21,9 @@ public class ApplicationRunner extends Application {
   public void start(final Stage primaryStage) throws Exception {
     ApplicationController.start(this, primaryStage);
   }
+
+  @Override
+  public void stop() throws Exception {
+    ApplicationController.stop();
+  }
 }
