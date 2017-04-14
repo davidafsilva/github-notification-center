@@ -41,6 +41,10 @@ public class ApplicationController {
         primaryStage);
     CONTROLLER.set(appController);
     appController.showLoginView(primaryStage);
+
+//    appController.ctx.setUser(new User("davidafsilva", "xxx",
+//        "https://avatars1.githubusercontent.com/u/2266642?v=3"));
+//    appController.showMainView();
   }
 
   static void stop() {
@@ -87,11 +91,15 @@ public class ApplicationController {
 
     // open main view
     final Rectangle2D screenResolution = Screen.getPrimary().getVisualBounds();
-    final double width = screenResolution.getWidth() * .65;
-    final double height = screenResolution.getHeight() * .70;
+    final double width = Math.max(screenResolution.getWidth() * .65, 600);
+    final double height = Math.max(screenResolution.getHeight() * .70, 400);
     final Scene scene = new Scene(view, width, height);
     scene.getStylesheets().add(ApplicationController.class.getResource("/app.css")
         .toExternalForm());
+    stage.setMinWidth(600);
+    stage.setWidth(width);
+    stage.setMinHeight(400);
+    stage.setHeight(height);
     stage.setScene(scene);
     stage.setOnShown(e -> controller.loadNotifications());
     stage.show();

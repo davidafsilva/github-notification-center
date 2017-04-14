@@ -11,3 +11,35 @@
     -fx-pref-width: 60;
     -fx-text-fill: WHITE;
 }
+
+.jfx-drawer-side-pane {
+    -fx-min-width: 150;
+    -fx-pref-width: 150;
+    -fx-max-width: 150;
+    -fx-background-color: rgb(36,41,46);
+}
+
+.jfx-drawer-side-pane .label {
+    -fx-text-fill: rgb(200, 201, 203);
+}
+
+.ghn-left-panel-username {
+    -fx-font-size: 14px;
+    -fx-font-weight: bolder;
+}
+
+.jfx-hamburger {
+    -fx-padding: 5 3 0 0;
+    -fx-cursor: hand;
+    -fx-max-width: 20;
+    -fx-max-height: 20;
+    -fx-spacing: 3;
+    -fx-alignment: top-right;
+}
+
+.jfx-hamburger StackPane {
+    -fx-pref-width: 16;
+    -fx-pref-height: 2;
+    -fx-background-color: rgb(200, 201, 203);
+    -fx-z-index: 99999;
+}
