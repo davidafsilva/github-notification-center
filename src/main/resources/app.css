@@ -1,3 +1,7 @@
+.ghn-white {
+    -fx-font-fill: white;
+}
+
 .ghn-button {
     -jfx-button-type: RAISED;
     -fx-background-color: rgb(73,92,102);
@@ -9,37 +13,187 @@
     -jfx-button-type: RAISED;
     -fx-background-color: rgb(221,113,92);
     -fx-pref-width: 60;
-    -fx-text-fill: WHITE;
+    -fx-text-fill: white;
 }
 
-.jfx-drawer-side-pane {
+.ghn-right-panel {
+    -fx-min-width: 400;
+}
+
+.ghn-left-panel {
     -fx-min-width: 150;
-    -fx-pref-width: 150;
-    -fx-max-width: 150;
+    -fx-pref-width: 200;
     -fx-background-color: rgb(36,41,46);
-}
-
-.jfx-drawer-side-pane .label {
-    -fx-text-fill: rgb(200, 201, 203);
+    -fx-border-color: #fbb665;
+    -fx-border-width: 0 2 0 0;
+    -fx-border-style: solid inside;
 }
 
 .ghn-left-panel-username {
-    -fx-font-size: 14px;
-    -fx-font-weight: bolder;
+    -fx-font-size: 20px;
+    -fx-text-fill: rgb(200, 201, 203);
+    -fx-font-family: Impact, Charcoal, sans-serif;
 }
 
-.jfx-hamburger {
-    -fx-padding: 5 3 0 0;
+.ghn-divider {
+    -fx-background-color: #2c3a46;
+    -fx-pref-height: 3;
+    -fx-effect: dropshadow(three-pass-box, rgba(111, 133, 155, 0.4), 10, 0, 0, 0);
+}
+.ghn-divider-minimal {
+    -fx-background-color: #2c3a46;
+    -fx-pref-height: 3;
+    -fx-effect: dropshadow(three-pass-box, rgba(111, 133, 155, 0.4), 10, 0, 0, 0);
+}
+
+.ghn-app-info {
+    -fx-font-size: 11px;
+    -fx-spacing: 12;
+    -fx-padding: 15;
+}
+
+.ghn-app-info .label {
+    -fx-text-fill: rgb(200, 201, 203);
+}
+
+.ghn-heart {
+    -fx-text-fill: #fbb665 !important;
+}
+
+/****************************************************************
+  Categories
+****************************************************************/
+
+ .jfx-toggle-button {
+    -fx-toggle-color: rgb(165, 181, 198);
+    -fx-untoggle-color: rgb(48, 58, 70);
+    -fx-padding: 0;
+    -fx-font-size: 9px;
+    -fx-text-fill: rgba(165, 181, 198, 0.8);
+ }
+
+.ghn-categories-label {
+    -fx-font-size: 11px;
+    -fx-font-family: Arial, Helvetica, sans-serif;
+    -fx-text-fill: rgba(165, 181, 198, 0.8);
+    -fx-padding: 17 0 0 0;
+}
+
+.ghn-categories-list {
+    -fx-background-color: rgb(36,41,46);
+    -fx-background-insets: 0 ;
+}
+
+.ghn-categories-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-alignment: center-left;
+    -fx-padding: 3 3 3 7;
+    -fx-background-radius: 4;
+}
+
+.ghn-categories-list .list-cell:hover {
+    -fx-background-color: rgb(64, 72, 81);
+}
+
+.ghn-categories-list .list-cell:selected {
+    -fx-background-color: rgb(36, 128, 157);
+}
+
+.ghn-category-item {
+    -fx-spacing: 10;
+}
+.ghn-category-item .label {
+    -fx-text-fill: rgb(200, 201, 203);
+}
+.ghn-category-item .trash-can {
+    -fx-text-fill: rgb(204, 94, 94);
+}
+
+.ghn-category-item .badge-pane {
+    -fx-font-size: 9px;
+    -fx-pref-width: 30;
+    -fx-pref-height: 15;
+    -fx-background-color: #2c3a46;
+    -fx-text-fill: grey;
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(165, 181, 198, 0.8);
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-border-style: solid;
+}
+
+/* The main scrollbar **track** CSS class  */
+.ghn-categories-list .scroll-bar:horizontal .track,
+.ghn-categories-list .scroll-bar:vertical .track {
+	-fx-background-color:#58616b;
+	-fx-border-color:#58616b;
+	-fx-background-radius: 0em;
+	-fx-border-radius:1em;
+}
+
+/* The increment and decrement button CSS class of scrollbar */
+.ghn-categories-list .scroll-bar:horizontal .increment-button ,
+.ghn-categories-list .scroll-bar:horizontal .decrement-button {
+    -fx-background-color:transparent;
+	-fx-background-radius: 0em;
+	-fx-padding:0 0 10 0;
+}
+
+/* The increment and decrement button CSS class of scrollbar */
+.ghn-categories-list .scroll-bar:vertical .increment-button ,
+.ghn-categories-list .scroll-bar:vertical .decrement-button {
+    -fx-background-color:transparent;
+	-fx-background-radius: 0em;
+	-fx-padding:0 10 0 0;
+}
+
+.ghn-categories-list .scroll-bar .increment-arrow,
+.ghn-categories-list .scroll-bar .decrement-arrow {
+	-fx-shape: " ";
+	-fx-padding:0;
+}
+
+/* The main scrollbar **thumb** CSS class which we drag every time (movable) */
+.ghn-categories-list .scroll-bar:horizontal .thumb,
+.ghn-categories-list .scroll-bar:vertical .thumb {
+    -fx-background-color: rgb(36,41,46);
+	-fx-background-insets: 1, 0, 0;
+	-fx-background-radius: 1em;
+}
+
+.ghn-create-category {
+    -fx-padding: 6;
+    -fx-spacing: 5;
     -fx-cursor: hand;
-    -fx-max-width: 20;
-    -fx-max-height: 20;
-    -fx-spacing: 3;
-    -fx-alignment: top-right;
+}
+.ghn-create-category .label {
+    -fx-text-fill: rgba(88, 170, 150, 0.7);
+}
+.ghn-create-category .glyph-font {
+    -fx-text-fill: rgb(88, 170, 150);
 }
 
-.jfx-hamburger StackPane {
-    -fx-pref-width: 16;
-    -fx-pref-height: 2;
-    -fx-background-color: rgb(200, 201, 203);
-    -fx-z-index: 99999;
+.ghn-category-delete-pane {
+    -fx-spacing: 10;
+    -fx-padding: 10;
+}
+
+.ghn-category-delete-pane {
+    -fx-background-color: rgb(36,41,46);
+    -fx-padding: 10;
+    -fx-border-color: grey;
+}
+
+.ghn-category-delete-pane-top {
+    -fx-spacing: 8;
+    -fx-font-size: 14px;
+}
+
+.ghn-category-delete-pane-center {
+    -fx-padding: 10 0 0 0;
+}
+
+.ghn-category-delete-pane-bottom {
+    -fx-padding: 10 0 0 0;
+    -fx-spacing: 5;
 }

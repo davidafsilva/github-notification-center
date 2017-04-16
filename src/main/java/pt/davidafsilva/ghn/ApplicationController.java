@@ -42,9 +42,9 @@ public class ApplicationController {
     CONTROLLER.set(appController);
     appController.showLoginView(primaryStage);
 
-//    appController.ctx.setUser(new User("davidafsilva", "xxx",
-//        "https://avatars1.githubusercontent.com/u/2266642?v=3"));
-//    appController.showMainView();
+    //appController.ctx.setUser(new User("davidafsilva", "xxx",
+    //    "https://avatars1.githubusercontent.com/u/2266642?v=3"));
+    //appController.showMainView();
   }
 
   static void stop() {
@@ -96,7 +96,7 @@ public class ApplicationController {
     final Scene scene = new Scene(view, width, height);
     scene.getStylesheets().add(ApplicationController.class.getResource("/app.css")
         .toExternalForm());
-    stage.setMinWidth(600);
+    stage.setMinWidth(650);
     stage.setWidth(width);
     stage.setMinHeight(400);
     stage.setHeight(height);

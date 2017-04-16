@@ -13,6 +13,9 @@ import pt.davidafsilva.ghn.model.User;
 public class NotificationsController {
 
   private static final Logger LOGGER = Logger.getLogger(NotificationsController.class.getName());
+  private static final String GITHUB_REPO =
+      "https://github.com/davidafsilva/github-notification-center";
+  private static final String DAVIDAFSILVA_PT = "http://davidafsilva.pt";
 
   private final ApplicationController appController;
   private final ApplicationContext appContext;
@@ -41,5 +44,13 @@ public class NotificationsController {
   public void loadNotifications() {
     // TODO: change me - auto-generated block
 
+  }
+
+  void openGitHub() {
+    appContext.getHostServices().showDocument(GITHUB_REPO);
+  }
+
+  void openWebPage() {
+    appContext.getHostServices().showDocument(DAVIDAFSILVA_PT);
   }
 }
