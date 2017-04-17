@@ -42,8 +42,7 @@ public class ApplicationController {
     CONTROLLER.set(appController);
     appController.showLoginView(primaryStage);
 
-    //appController.ctx.setUser(new User("davidafsilva", "xxx",
-    //    "https://avatars1.githubusercontent.com/u/2266642?v=3"));
+    //appController.ctx.setUser(new User("davidafsilva", "xxx", "https://avatars1.githubusercontent.com/u/2266642?v=3"));
     //appController.showMainView();
   }
 
@@ -101,7 +100,11 @@ public class ApplicationController {
     stage.setMinHeight(400);
     stage.setHeight(height);
     stage.setScene(scene);
-    stage.setOnShown(e -> controller.loadNotifications());
+    stage.setOnShown(e -> {
+      // FIXME: load categories
+
+      // FIXME: load notifications
+    });
     stage.show();
   }
 

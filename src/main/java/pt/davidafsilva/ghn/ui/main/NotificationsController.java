@@ -6,6 +6,8 @@ import pt.davidafsilva.ghn.ApplicationContext;
 import pt.davidafsilva.ghn.ApplicationController;
 import pt.davidafsilva.ghn.ApplicationOptions;
 import pt.davidafsilva.ghn.model.User;
+import pt.davidafsilva.ghn.model.mutable.Category;
+import reactor.core.publisher.Flux;
 
 /**
  * @author david
@@ -41,16 +43,22 @@ public class NotificationsController {
     return appContext.getUser();
   }
 
-  public void loadNotifications() {
-    // TODO: change me - auto-generated block
-
-  }
-
   void openGitHub() {
     appContext.getHostServices().showDocument(GITHUB_REPO);
   }
 
   void openWebPage() {
     appContext.getHostServices().showDocument(DAVIDAFSILVA_PT);
+  }
+
+  Flux<Category> getCategories() {
+    // FIXME:
+    return Flux.just(
+        new Category("All", false, false),
+        new Category("Unread", false, false)
+    ).subscribeOn(appContext.getWorkScheduler());
+  }
+
+  void loadNotifications() {
   }
 }
