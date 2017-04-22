@@ -13,11 +13,14 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
     // compile
+    compile 'pt.davidafsilva.apple:jkeychain:1.0.0-SNAPSHOT'
+
     compile 'io.projectreactor:reactor-core:3.0.5.RELEASE'
     compile 'io.projectreactor.ipc:reactor-netty:0.6.2.RELEASE'
     compile 'com.fasterxml.jackson.core:jackson-core:2.8.7'
@@ -26,6 +29,8 @@ dependencies {
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.7'
     compile 'com.jfoenix:jfoenix:1.0.0'
     compile 'org.controlsfx:controlsfx:8.40.12'
+    //compile 'net.java.dev.jna:jna-platform:4.4.0'
+    //compile 'com.couchbase.lite:couchbase-lite-java:1.4.0'
 
     // test
     testCompile 'junit:junit:4.12'

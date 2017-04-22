@@ -4,9 +4,9 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import pt.davidafsilva.apple.OSXKeychain;
+import pt.davidafsilva.apple.OSXKeychainException;
 import pt.davidafsilva.ghn.ApplicationOptions;
-import pt.davidafsilva.ghn.service.options.osx.OSXKeychain;
-import pt.davidafsilva.ghn.service.options.osx.OSXKeychainException;
 
 /**
  * @author david
