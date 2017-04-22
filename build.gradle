@@ -14,12 +14,12 @@ targetCompatibility = 1.8
 
 repositories {
     mavenLocal()
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
     // compile
-    compile 'pt.davidafsilva.apple:jkeychain:1.0.0-SNAPSHOT'
+    compile 'pt.davidafsilva.apple:jkeychain:1.0.0'
 
     compile 'io.projectreactor:reactor-core:3.0.5.RELEASE'
     compile 'io.projectreactor.ipc:reactor-netty:0.6.2.RELEASE'
