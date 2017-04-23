@@ -87,7 +87,11 @@ class LeftSideView extends BorderPane {
     // lazily load the actual image from the network
     controller.getUser().getAvatarUrl().ifPresent(url -> {
       final Image img = loadImage(url, true);
-      img.progressProperty().isEqualTo(1).addListener((a, b, c) -> photoImage.setImage(img));
+      img.progressProperty().addListener((ob, old, val) -> {
+        if (val.doubleValue() == 1d) {
+          photoImage.setImage(img);
+        }
+      });
     });
 
     // username
