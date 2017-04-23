@@ -166,6 +166,7 @@ public class LoginView extends GridPane {
   void setLoggingIn() {
     // disable UI
     progressSpinner.setVisible(true);
+    loginForm.requestFocus();
     setDisabled(true);
   }
 
