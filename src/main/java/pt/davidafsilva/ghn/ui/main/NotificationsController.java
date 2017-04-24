@@ -14,7 +14,6 @@ import reactor.core.publisher.Flux;
  */
 public class NotificationsController {
 
-  private static final Logger LOGGER = Logger.getLogger(NotificationsController.class.getName());
   private static final String GITHUB_REPO =
       "https://github.com/davidafsilva/github-notification-center";
   private static final String DAVIDAFSILVA_PT = "http://davidafsilva.pt";

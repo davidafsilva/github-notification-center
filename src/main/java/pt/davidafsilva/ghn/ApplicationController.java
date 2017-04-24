@@ -2,8 +2,6 @@ package pt.davidafsilva.ghn;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.swing.*;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
@@ -11,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import pt.davidafsilva.ghn.model.User;
 import pt.davidafsilva.ghn.ui.login.LoginController;
 import pt.davidafsilva.ghn.ui.login.LoginView;
 import pt.davidafsilva.ghn.ui.main.NotificationsController;
@@ -35,34 +34,19 @@ public class ApplicationController {
 
   static void start(final Application application, final Stage primaryStage) {
     primaryStage.setTitle("GitHub Notification Center");
-    setIcons(primaryStage);
+    primaryStage.getIcons().add(new Image(ApplicationController.class
+        .getResourceAsStream("/ghnc-64.png")));
 
-    final ApplicationController appController = new ApplicationController(application,
-        primaryStage);
+    final ApplicationController appController = new ApplicationController(application, primaryStage);
     CONTROLLER.set(appController);
-    appController.showLoginView(primaryStage);
+    //appController.showLoginView(primaryStage);
 
-    //appController.ctx.setUser(new User("davidafsilva", "xxx", "https://avatars1.githubusercontent.com/u/2266642?v=3"));
-    //appController.showMainView();
+    appController.ctx.setUser(new User("davidafsilva", "xxx", "https://avatars1.githubusercontent.com/u/2266642?v=3"));
+    appController.showMainView();
   }
 
   static void stop() {
     CONTROLLER.get().exit();
-  }
-
-  private static void setIcons(final Stage primaryStage) {
-    final Image icon = new Image(ApplicationController.class
-        .getResourceAsStream("/ghnc-64.png"));
-    primaryStage.getIcons().add(icon);
-
-    // OS X dock icon
-    try {
-      Class.forName("com.apple.eawt.Application");
-      com.apple.eawt.Application.getApplication().setDockIconImage(
-          new ImageIcon(ApplicationController.class.getResource("/ghnc-256.png")).getImage());
-    } catch (ClassNotFoundException e) {
-      // not applicable to windows/linux
-    }
   }
 
   private void showLoginView(final Stage stage) {

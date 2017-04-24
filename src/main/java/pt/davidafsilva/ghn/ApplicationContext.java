@@ -30,7 +30,7 @@ public class ApplicationContext {
     this.primaryStage = primaryStage;
     this.applicationOptionsService = new ApplicationOptionsService();
     this.gitHubNotificationService = new GitHubNotificationService(this);
-    this.gitHubAuthService = new GitHubAuthService(applicationOptionsService.getOptions());
+    this.gitHubAuthService = new GitHubAuthService(applicationOptionsService.load());
     this.workScheduler = Schedulers.newElastic("ghn");
   }
 
@@ -39,7 +39,7 @@ public class ApplicationContext {
   }
 
   public ApplicationOptions getOptions() {
-    return applicationOptionsService.getOptions();
+    return applicationOptionsService.load();
   }
 
   public User getUser() {

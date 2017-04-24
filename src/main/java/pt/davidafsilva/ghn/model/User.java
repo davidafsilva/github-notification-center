@@ -9,7 +9,7 @@ import java.util.Optional;
 public class User extends AbstractModel {
 
   private final String username;
-  private final String credentials;
+  private final transient String credentials;
   private final String avatarUrl;
 
   public User(final String username, final String credentials, final String avatarUrl) {

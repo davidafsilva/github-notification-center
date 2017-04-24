@@ -3,33 +3,56 @@ package pt.davidafsilva.ghn.service.options;
 import java.util.Locale;
 
 import pt.davidafsilva.ghn.ApplicationOptions;
+import pt.davidafsilva.ghn.service.options.storage.JavaCryptoBackedStorageService;
+import pt.davidafsilva.ghn.service.options.storage.OsxKeychainStorageService;
+import pt.davidafsilva.ghn.service.options.storage.SecureStorageService;
+import pt.davidafsilva.ghn.service.options.storage.StorageService;
+import pt.davidafsilva.ghn.service.options.storage.Win32CryptoBackedStorageService;
 
 /**
  * @author david
  */
 public class ApplicationOptionsService {
 
-  private final ApplicationOptionsBackend backend;
-  private final ApplicationOptions options;
+  private final StorageService storageService;
+  private final SecureStorageService secureStorageService;
+
+  private ApplicationOptions options;
 
   public ApplicationOptionsService() {
-    backend = resolveBackendStrategy();
-    options = backend.load();
+    // FIXME: impl
+    storageService = null;
+    secureStorageService = resolveSecureStorage(storageService);
   }
 
-  public ApplicationOptions getOptions() {
+  public ApplicationOptions load() {
+    if (options == null) {
+      // FIXME: load options
+    }
     return options;
   }
 
   public void save(final ApplicationOptions options) {
-    backend.save(options);
+    // FIXME: save options
   }
 
-  private ApplicationOptionsBackend resolveBackendStrategy() {
-    String os = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
-    if (os.contains("mac") || os.contains("darwin")) {
-      return new OsxKeychainBasedBackend();
+  private SecureStorageService resolveSecureStorage(final StorageService defaultStorage) {
+    final SecureStorageService secureStorageService;
+    final String os = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+
+    // detect OSX
+    if (os.startsWith("mac") || os.startsWith("darwin")) {
+      secureStorageService = new OsxKeychainStorageService();
     }
-    return new DotFileBasedBackend();
+    // windows
+    else if (os.startsWith("windows")) {
+      secureStorageService = new Win32CryptoBackedStorageService(defaultStorage);
+    }
+    // linux/other
+    else {
+      secureStorageService = new JavaCryptoBackedStorageService(defaultStorage);
+    }
+
+    return secureStorageService;
   }
 }

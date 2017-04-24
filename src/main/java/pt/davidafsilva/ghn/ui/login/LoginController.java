@@ -1,9 +1,10 @@
 package pt.davidafsilva.ghn.ui.login;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.Duration;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import pt.davidafsilva.ghn.ApplicationContext;
@@ -24,7 +25,7 @@ import static pt.davidafsilva.ghn.util.AuthorizationFacility.isToken;
  */
 public class LoginController {
 
-  private static final Logger LOGGER = Logger.getLogger(LoginController.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
   private final ApplicationController appController;
   private final ApplicationContext appContext;
@@ -79,7 +80,7 @@ public class LoginController {
         .doOnError(TokenExistsException.class,
             t -> Platform.runLater(loginView::displayTokenExists))
         .doOnSuccess(token -> {
-          LOGGER.log(Level.INFO, "token was created");
+          LOGGER.info("token was created");
           // save token
           saveToken(token);
         });
@@ -98,7 +99,7 @@ public class LoginController {
         .doOnError(t -> !GhnException.class.isInstance(t),
             t -> Platform.runLater(() -> loginView.displayUnexpectedError(t.getLocalizedMessage())))
         .doOnSuccess(user -> {
-          LOGGER.log(Level.INFO, "successfully logged in as " + user);
+          LOGGER.info("successfully logged in as " + user);
           appContext.setUser(user);
           Platform.runLater(() -> {
             loginView.loginSuccessful();
