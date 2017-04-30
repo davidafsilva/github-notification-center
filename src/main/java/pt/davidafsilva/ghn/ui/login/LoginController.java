@@ -9,8 +9,8 @@ import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
 import pt.davidafsilva.ghn.ApplicationContext;
 import pt.davidafsilva.ghn.ApplicationController;
-import pt.davidafsilva.ghn.ApplicationOptions;
 import pt.davidafsilva.ghn.model.User;
+import pt.davidafsilva.ghn.model.mutable.Configuration;
 import pt.davidafsilva.ghn.service.GhnException;
 import pt.davidafsilva.ghn.service.auth.GitHubAuthService;
 import pt.davidafsilva.ghn.service.auth.InvalidCredentialsException;
@@ -111,8 +111,11 @@ public class LoginController {
   }
 
   private void saveToken(final String token) {
-    final ApplicationOptions options = appContext.getOptions();
-    options.setToken(token);
-    appContext.getApplicationOptionsService().save(options);
+    // set the token
+    final Configuration configuration = appContext.getConfiguration();
+    configuration.getSecuredConfiguration().setToken(token);
+
+    // save the token
+    appContext.getConfigurationService().save(configuration);
   }
 }

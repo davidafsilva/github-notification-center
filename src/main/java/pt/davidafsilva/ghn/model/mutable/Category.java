@@ -1,19 +1,36 @@
 package pt.davidafsilva.ghn.model.mutable;
 
+import java.util.UUID;
+
+import pt.davidafsilva.ghn.model.AbstractModel;
+import pt.davidafsilva.ghn.model.Persisted;
+
 /**
  * @author david
  */
-public class Category {
+public class Category extends AbstractModel implements Persisted {
 
+  private String id;
   private String name;
   private boolean isEditable;
   private boolean isDeletable;
   private int unreadCount;
 
   public Category(final String name, final boolean isEditable, final boolean isDeletable) {
+    this(UUID.randomUUID().toString(), name, isEditable, isDeletable);
+  }
+
+  public Category(final String id, final String name, final boolean isEditable,
+      final boolean isDeletable) {
+    this.id = id;
     this.name = name;
     this.isEditable = isEditable;
     this.isDeletable = isDeletable;
+  }
+
+  @Override
+  public String getId() {
+    return id;
   }
 
   public String getName() {

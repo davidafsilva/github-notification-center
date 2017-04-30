@@ -25,7 +25,7 @@ public final class AuthorizationFacility {
   }
 
   public static String createHeaderValueFor(final ApplicationContext context) {
-    return context.getOptions().getToken()
+    return context.getConfiguration().getSecuredConfiguration().getToken()
         .map(AuthorizationFacility::createHeaderValueFor)
         .orElseGet(() -> {
           final String credentials = context.getUser().getCredentials();

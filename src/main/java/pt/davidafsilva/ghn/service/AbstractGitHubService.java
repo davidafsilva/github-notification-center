@@ -9,7 +9,7 @@ import java.util.Objects;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import pt.davidafsilva.ghn.ApplicationContext;
-import pt.davidafsilva.ghn.ApplicationOptions;
+import pt.davidafsilva.ghn.model.mutable.Configuration;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Mono;
 import reactor.ipc.netty.http.client.HttpClientException;
@@ -86,9 +86,8 @@ public class AbstractGitHubService {
     return false;
   }
 
-  protected String url(final ApplicationOptions options, final String path) {
-    return options.getGitHubScheme() + "://" + options.getGitHubHost() + ":" +
-        options.getGitHubPort() + path;
+  protected String url(final Configuration options, final String path) {
+    return options.getGithubUrl() + path;
   }
 
   protected Mono<JsonNode> decodeJson(final HttpClientResponse response, final ObjectMapper mapper) {

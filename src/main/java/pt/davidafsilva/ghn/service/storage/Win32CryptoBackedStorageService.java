@@ -1,4 +1,4 @@
-package pt.davidafsilva.ghn.service.options.storage;
+package pt.davidafsilva.ghn.service.storage;
 
 import static com.sun.jna.platform.win32.Crypt32Util.cryptProtectData;
 import static com.sun.jna.platform.win32.Crypt32Util.cryptUnprotectData;
@@ -6,9 +6,9 @@ import static com.sun.jna.platform.win32.Crypt32Util.cryptUnprotectData;
 /**
  * @author david
  */
-public class Win32CryptoBackedStorageService extends CryptoBackedStorageService {
+class Win32CryptoBackedStorageService extends CryptoBackedStorageService {
 
-  public Win32CryptoBackedStorageService(final StorageService decorated) {
+  Win32CryptoBackedStorageService(final StorageService decorated) {
     super(decorated);
   }
 

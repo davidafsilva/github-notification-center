@@ -1,5 +1,7 @@
 package pt.davidafsilva.ghn.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Objects;
 import java.util.Optional;
 
@@ -9,7 +11,8 @@ import java.util.Optional;
 public class User extends AbstractModel {
 
   private final String username;
-  private final transient String credentials;
+  @JsonIgnore
+  private final String credentials;
   private final String avatarUrl;
 
   public User(final String username, final String credentials, final String avatarUrl) {

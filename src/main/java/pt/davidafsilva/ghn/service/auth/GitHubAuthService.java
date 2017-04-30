@@ -11,8 +11,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
-import pt.davidafsilva.ghn.ApplicationOptions;
 import pt.davidafsilva.ghn.model.User;
+import pt.davidafsilva.ghn.model.mutable.Configuration;
 import pt.davidafsilva.ghn.service.AbstractGitHubService;
 import reactor.core.publisher.Mono;
 import reactor.ipc.netty.http.client.HttpClient;
@@ -40,7 +40,7 @@ public class GitHubAuthService extends AbstractGitHubService {
   private final String loginUrl;
   private final String tokenUrl;
 
-  public GitHubAuthService(final ApplicationOptions applicationOptions) {
+  public GitHubAuthService(final Configuration applicationOptions) {
     this.client = HttpClient.create(opt -> opt.sslSupport().disablePool());
     this.loginUrl = url(applicationOptions, LOGIN_URL_PATH);
     this.tokenUrl = url(applicationOptions, TOKEN_URL_PATH);

@@ -1,4 +1,4 @@
-package pt.davidafsilva.ghn.service.options.storage;
+package pt.davidafsilva.ghn.service.storage;
 
 /**
  * @author david

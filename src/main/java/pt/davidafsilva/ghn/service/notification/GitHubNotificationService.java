@@ -46,9 +46,7 @@ public class GitHubNotificationService extends AbstractGitHubService {
   public GitHubNotificationService(final ApplicationContext context) {
     this.context = context;
     this.client = HttpClient.create(opt -> opt.sslSupport().disablePool());
-    this.baseUrl = context.getOptions().getGitHubScheme() + "://" +
-        context.getOptions().getGitHubHost() + ":" +
-        context.getOptions().getGitHubPort() + NOTIFICATIONS_PATH;
+    this.baseUrl = context.getConfiguration().getGithubUrl() + NOTIFICATIONS_PATH;
   }
 
   public Flux<Notification> getNotifications(final NotificationFilter filter) {

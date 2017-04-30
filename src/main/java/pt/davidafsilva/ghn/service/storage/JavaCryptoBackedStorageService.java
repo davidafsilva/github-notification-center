@@ -1,4 +1,4 @@
-package pt.davidafsilva.ghn.service.options.storage;
+package pt.davidafsilva.ghn.service.storage;
 
 import java.security.DigestException;
 import java.security.MessageDigest;
@@ -17,7 +17,7 @@ import oshi.hardware.HardwareAbstractionLayer;
 /**
  * @author david
  */
-public class JavaCryptoBackedStorageService extends CryptoBackedStorageService {
+class JavaCryptoBackedStorageService extends CryptoBackedStorageService {
 
   private static final String CIPHER_SETTINGS = "AES/CBC/PKCS5Padding";
   private static final String SECRET_SETTINGS = "PBKDF2WithHmacSHA512";
@@ -29,7 +29,7 @@ public class JavaCryptoBackedStorageService extends CryptoBackedStorageService {
   private final SecretKeySpec secretKey;
   private final Cipher cipher;
 
-  public JavaCryptoBackedStorageService(final StorageService decorated) {
+  JavaCryptoBackedStorageService(final StorageService decorated) {
     super(decorated);
     try {
       // TODO: not safe by any means

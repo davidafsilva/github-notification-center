@@ -21,22 +21,31 @@ repositories {
 }
 
 dependencies {
-    // compile
+    // logging
     compile 'org.slf4j:slf4j-api:1.7.25'
     compile 'ch.qos.logback:logback-classic:1.2.3'
 
-    compile 'pt.davidafsilva.apple:jkeychain:1.0.0'
+    // reactor
     compile 'io.projectreactor:reactor-core:3.0.5.RELEASE'
     compile 'io.projectreactor.ipc:reactor-netty:0.6.2.RELEASE'
+
+    // security: OSX and Windows access
+    compile 'pt.davidafsilva.apple:jkeychain:1.0.0'
+    compile 'net.java.dev.jna:jna-platform:4.4.0'
+    compile 'com.github.oshi:oshi-core:3.4.2'
+
+    // json
     compile 'com.fasterxml.jackson.core:jackson-core:2.8.7'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.8.7'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.8.7'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.7'
+
+    // database
+    compile 'com.couchbase.lite:couchbase-lite-java:1.4.0'
+
+    // ui libraries
     compile 'com.jfoenix:jfoenix:1.0.0'
     compile 'org.controlsfx:controlsfx:8.40.12'
-    compile 'net.java.dev.jna:jna-platform:4.4.0'
-    compile 'com.github.oshi:oshi-core:3.4.2'
-    //compile 'com.couchbase.lite:couchbase-lite-java:1.4.0'
 
     // test
     testCompile 'junit:junit:4.12'

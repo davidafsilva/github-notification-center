@@ -6,9 +6,11 @@ import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.stage.Stage;
 import pt.davidafsilva.ghn.model.User;
-import pt.davidafsilva.ghn.service.notification.GitHubNotificationService;
+import pt.davidafsilva.ghn.model.mutable.Configuration;
 import pt.davidafsilva.ghn.service.auth.GitHubAuthService;
-import pt.davidafsilva.ghn.service.options.ApplicationOptionsService;
+import pt.davidafsilva.ghn.service.configuration.ApplicationConfigurationService;
+import pt.davidafsilva.ghn.service.notification.GitHubNotificationService;
+import pt.davidafsilva.ghn.service.storage.StorageServiceFactory;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
@@ -20,7 +22,7 @@ public class ApplicationContext {
   private final Application application;
   private final Stage primaryStage;
   private final AtomicReference<User> user = new AtomicReference<>();
-  private final ApplicationOptionsService applicationOptionsService;
+  private final ApplicationConfigurationService applicationConfigurationService;
   private final GitHubAuthService gitHubAuthService;
   private final GitHubNotificationService gitHubNotificationService;
   private final Scheduler workScheduler;
@@ -28,9 +30,14 @@ public class ApplicationContext {
   ApplicationContext(final Application application, final Stage primaryStage) {
     this.application = application;
     this.primaryStage = primaryStage;
-    this.applicationOptionsService = new ApplicationOptionsService();
+
+    // initialize services
+    final StorageServiceFactory storageServiceFactory = new StorageServiceFactory();
+    this.applicationConfigurationService = new ApplicationConfigurationService(
+        storageServiceFactory.createUnsecuredStorage(), storageServiceFactory.createSecuredStorage()
+    );
     this.gitHubNotificationService = new GitHubNotificationService(this);
-    this.gitHubAuthService = new GitHubAuthService(applicationOptionsService.load());
+    this.gitHubAuthService = new GitHubAuthService(applicationConfigurationService.load());
     this.workScheduler = Schedulers.newElastic("ghn");
   }
 
@@ -38,8 +45,13 @@ public class ApplicationContext {
     return application.getHostServices();
   }
 
-  public ApplicationOptions getOptions() {
-    return applicationOptionsService.load();
+
+  public ApplicationConfigurationService getConfigurationService() {
+    return applicationConfigurationService;
+  }
+
+  public Configuration getConfiguration() {
+    return applicationConfigurationService.load();
   }
 
   public User getUser() {
@@ -56,10 +68,6 @@ public class ApplicationContext {
 
   public GitHubNotificationService getGitHubNotificationService() {
     return gitHubNotificationService;
-  }
-
-  public ApplicationOptionsService getApplicationOptionsService() {
-    return applicationOptionsService;
   }
 
   public Stage getPrimaryStage() {

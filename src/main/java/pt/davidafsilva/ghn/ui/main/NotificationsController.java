@@ -1,12 +1,10 @@
 package pt.davidafsilva.ghn.ui.main;
 
-import java.util.logging.Logger;
-
 import pt.davidafsilva.ghn.ApplicationContext;
 import pt.davidafsilva.ghn.ApplicationController;
-import pt.davidafsilva.ghn.ApplicationOptions;
 import pt.davidafsilva.ghn.model.User;
 import pt.davidafsilva.ghn.model.mutable.Category;
+import pt.davidafsilva.ghn.model.mutable.Configuration;
 import reactor.core.publisher.Flux;
 
 /**
@@ -34,8 +32,8 @@ public class NotificationsController {
     return notificationsView;
   }
 
-  ApplicationOptions getOptions() {
-    return appContext.getOptions();
+  Configuration getConfiguration() {
+    return appContext.getConfiguration();
   }
 
   User getUser() {
