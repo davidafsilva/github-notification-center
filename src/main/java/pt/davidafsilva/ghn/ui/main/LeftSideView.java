@@ -250,4 +250,7 @@ class LeftSideView extends BorderPane {
     Platform.runLater(() -> categoriesMap.remove(name));
   }
 
+  boolean hasCategories() {
+    return !categoriesMap.isEmpty();
+  }
 }

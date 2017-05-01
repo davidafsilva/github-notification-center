@@ -1,25 +1,27 @@
 package pt.davidafsilva.ghn.service.configuration;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import pt.davidafsilva.ghn.model.mutable.Configuration;
 import pt.davidafsilva.ghn.model.mutable.SecuredConfiguration;
 import pt.davidafsilva.ghn.service.storage.SecureStorageService;
 import pt.davidafsilva.ghn.service.storage.StorageService;
+import pt.davidafsilva.ghn.util.Schedulers;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
  * @author david
  */
-public class ApplicationConfigurationService {
+public class ConfigurationService {
 
   private final StorageService storageService;
   private final SecureStorageService secureStorageService;
 
   private AtomicReference<Configuration> configuration = new AtomicReference<>();
 
-  public ApplicationConfigurationService(
+  public ConfigurationService(
       final StorageService storageService,
       final SecureStorageService secureStorageService) {
     this.storageService = storageService;
@@ -38,8 +40,10 @@ public class ApplicationConfigurationService {
     // load unsecure bit
     return storageService.readAll(Configuration.class)
         .next()
+        .otherwiseIfEmpty(Mono.defer(() ->
+            Mono.just(new Configuration(UUID.randomUUID().toString()))))
+        .subscribeOn(Schedulers.io())
         .subscribe()
-        .otherwiseIfEmpty(Mono.defer(() -> Mono.just(new Configuration())))
         // then load the secure bit
         .then(cfg -> secureStorageService.read(SecuredConfiguration.class, SecuredConfiguration.ID)
             .doOnNext(cfg::setSecuredConfiguration)
@@ -51,16 +55,17 @@ public class ApplicationConfigurationService {
     this.configuration.set(configuration);
 
     // unsecure config
-    final Mono<Void> unsecureSave = storageService.write(Configuration.class, configuration);
+    final Mono<Void> unsecureSave = storageService.write(configuration);
 
     // secure config
     final SecuredConfiguration secureConfig = configuration.getSecuredConfiguration();
     final Mono<Void> secureSave = secureConfig == null ? Mono.empty() :
-        secureStorageService.write(SecuredConfiguration.class, secureConfig);
+        secureStorageService.write(secureConfig);
 
     // merge both saves
     return Flux.merge(unsecureSave, secureSave)
         .then()
+        .subscribeOn(Schedulers.io())
         .subscribe();
   }
 }

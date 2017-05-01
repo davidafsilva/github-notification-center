@@ -54,8 +54,7 @@ class OsxKeychainStorageService implements SecureStorageService {
   }
 
   @Override
-  public <O extends AbstractModel & Persisted> Mono<Void> write(
-      final Class<? extends AbstractModel> type, final O value) {
+  public <O extends AbstractModel & Persisted> Mono<Void> write(final O value) {
     return Mono.defer(() -> {
       try {
         // serialize

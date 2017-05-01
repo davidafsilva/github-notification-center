@@ -1,11 +1,16 @@
 package pt.davidafsilva.ghn.ui.main;
 
+import java.util.UUID;
+
+import javafx.application.Platform;
 import pt.davidafsilva.ghn.ApplicationContext;
 import pt.davidafsilva.ghn.ApplicationController;
 import pt.davidafsilva.ghn.model.User;
 import pt.davidafsilva.ghn.model.mutable.Category;
 import pt.davidafsilva.ghn.model.mutable.Configuration;
+import pt.davidafsilva.ghn.service.category.CategoryService;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * @author david
@@ -48,14 +53,35 @@ public class NotificationsController {
     appContext.getHostServices().showDocument(DAVIDAFSILVA_PT);
   }
 
-  Flux<Category> getCategories() {
-    // FIXME:
-    return Flux.just(
-        new Category("All", false, false),
-        new Category("Unread", false, false)
-    ).subscribeOn(appContext.getWorkScheduler());
+  public void loadCategories() {
+    appContext.getCategoryService().load()
+        .doOnNext(notificationsView::addCategory)
+        .doOnTerminate(this::addDefaultCategories)
+        .subscribe();
   }
 
-  void loadNotifications() {
+  private void addDefaultCategories() {
+    Platform.runLater(() -> {
+      if (!notificationsView.hasCategories()) {
+        final CategoryService categoryService = appContext.getCategoryService();
+        final Mono<Category> all = categoryService.save(createDefaultCategory("All"));
+        final Mono<Category> unread = categoryService.save(createDefaultCategory("Unread"));
+        Flux.merge(all, unread)
+            .doOnNext(notificationsView::addCategory)
+            .subscribe();
+      }
+    });
+  }
+
+  private Category createDefaultCategory(final String name) {
+    final Category category = new Category(UUID.randomUUID().toString());
+    category.setName(name);
+    category.setDeletable(false);
+    category.setEditable(false);
+    return category;
+  }
+
+  public void loadNotifications() {
+    //FIXME
   }
 }

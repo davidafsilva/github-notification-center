@@ -106,7 +106,6 @@ public class LoginController {
             appController.showMainView();
           });
         })
-        .subscribeOn(appContext.getWorkScheduler())
         .subscribe();
   }
 

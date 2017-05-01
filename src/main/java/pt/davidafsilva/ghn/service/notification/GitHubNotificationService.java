@@ -20,6 +20,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import pt.davidafsilva.ghn.ApplicationContext;
 import pt.davidafsilva.ghn.model.Notification;
 import pt.davidafsilva.ghn.service.AbstractGitHubService;
+import pt.davidafsilva.ghn.util.Schedulers;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -53,7 +54,8 @@ public class GitHubNotificationService extends AbstractGitHubService {
     return client.get(filter.addParametersTo(baseUrl), this::sendRequest)
         .mapError(this::isUnauthorizedOrForbidden, UnauthorizedRequestException::new)
         .filter(r -> r.status() == HttpResponseStatus.OK)
-        .flatMap(this::unmarshall);
+        .flatMap(this::unmarshall)
+        .subscribeOn(Schedulers.io());
   }
 
   // -----------------

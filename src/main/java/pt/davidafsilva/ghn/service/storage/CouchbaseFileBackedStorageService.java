@@ -110,8 +110,7 @@ class CouchbaseFileBackedStorageService implements StorageService {
   }
 
   @Override
-  public <O extends AbstractModel & Persisted> Mono<Void> write(
-      final Class<? extends AbstractModel> type, final O value) {
+  public <O extends AbstractModel & Persisted> Mono<Void> write(final O value) {
     // get the database ref
     final Database database = DatabaseHolder.database;
     try {
@@ -119,7 +118,7 @@ class CouchbaseFileBackedStorageService implements StorageService {
       Map<String, Object> properties = document.getProperties();
       if (properties == null) {
         properties = new HashMap<>();
-        properties.put("type", type.getCanonicalName());
+        properties.put("type", value.getClass().getCanonicalName());
       }
       properties.put("value", marshall(value));
       document.putProperties(properties);
@@ -136,7 +135,6 @@ class CouchbaseFileBackedStorageService implements StorageService {
     if (view.getMap() == null) {
       view.setMap((document, emitter) -> {
         final Object type = document.get("type");
-        System.out.println("########### -> " + document);
         if (Objects.equals(type, clazz.getCanonicalName())) {
           final O value = unmarshall(clazz, document.get("value").toString());
           emitter.emit(value.getId(), value);

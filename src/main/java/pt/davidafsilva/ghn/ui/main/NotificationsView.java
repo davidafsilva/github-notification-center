@@ -35,4 +35,8 @@ public class NotificationsView extends BorderPane {
   void removeCategory(final Category category) {
     leftSideView.removeCategory(category);
   }
+
+  boolean hasCategories() {
+    return leftSideView.hasCategories();
+  }
 }

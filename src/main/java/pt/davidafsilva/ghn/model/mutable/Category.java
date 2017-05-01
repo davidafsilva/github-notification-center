@@ -1,6 +1,7 @@
 package pt.davidafsilva.ghn.model.mutable;
 
-import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import pt.davidafsilva.ghn.model.AbstractModel;
 import pt.davidafsilva.ghn.model.Persisted;
@@ -16,16 +17,9 @@ public class Category extends AbstractModel implements Persisted {
   private boolean isDeletable;
   private int unreadCount;
 
-  public Category(final String name, final boolean isEditable, final boolean isDeletable) {
-    this(UUID.randomUUID().toString(), name, isEditable, isDeletable);
-  }
-
-  public Category(final String id, final String name, final boolean isEditable,
-      final boolean isDeletable) {
+  @JsonCreator
+  public Category(@JsonProperty(value = "id", required = true) final String id) {
     this.id = id;
-    this.name = name;
-    this.isEditable = isEditable;
-    this.isDeletable = isDeletable;
   }
 
   @Override
@@ -37,35 +31,31 @@ public class Category extends AbstractModel implements Persisted {
     return name;
   }
 
-  public Category setName(final String name) {
+  public void setName(final String name) {
     this.name = name;
-    return this;
   }
 
   public boolean isEditable() {
     return isEditable;
   }
 
-  public Category setEditable(final boolean editable) {
+  public void setEditable(final boolean editable) {
     isEditable = editable;
-    return this;
   }
 
   public boolean isDeletable() {
     return isDeletable;
   }
 
-  public Category setDeletable(final boolean deletable) {
+  public void setDeletable(final boolean deletable) {
     isDeletable = deletable;
-    return this;
   }
 
   public int getUnreadCount() {
     return unreadCount;
   }
 
-  public Category setUnreadCount(final int unreadCount) {
+  public void setUnreadCount(final int unreadCount) {
     this.unreadCount = unreadCount;
-    return this;
   }
 }

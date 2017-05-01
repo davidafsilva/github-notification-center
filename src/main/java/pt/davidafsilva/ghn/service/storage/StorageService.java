@@ -14,6 +14,6 @@ public interface StorageService {
 
   <O extends AbstractModel & Persisted> Mono<O> read(final Class<O> type, final String key);
 
-  <O extends AbstractModel & Persisted> Mono<Void> write(final Class<? extends AbstractModel> type, final O value);
+  <O extends AbstractModel & Persisted> Mono<Void> write(final O value);
 
 }

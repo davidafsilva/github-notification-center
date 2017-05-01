@@ -8,11 +8,10 @@ import javafx.stage.Stage;
 import pt.davidafsilva.ghn.model.User;
 import pt.davidafsilva.ghn.model.mutable.Configuration;
 import pt.davidafsilva.ghn.service.auth.GitHubAuthService;
-import pt.davidafsilva.ghn.service.configuration.ApplicationConfigurationService;
+import pt.davidafsilva.ghn.service.category.CategoryService;
+import pt.davidafsilva.ghn.service.configuration.ConfigurationService;
 import pt.davidafsilva.ghn.service.notification.GitHubNotificationService;
 import pt.davidafsilva.ghn.service.storage.StorageServiceFactory;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
 /**
  * @author david
@@ -22,10 +21,11 @@ public class ApplicationContext {
   private final Application application;
   private final Stage primaryStage;
   private final AtomicReference<User> user = new AtomicReference<>();
-  private final ApplicationConfigurationService applicationConfigurationService;
+
+  private final ConfigurationService configurationService;
   private final GitHubAuthService gitHubAuthService;
   private final GitHubNotificationService gitHubNotificationService;
-  private final Scheduler workScheduler;
+  private final CategoryService categoryService;
 
   ApplicationContext(final Application application, final Stage primaryStage) {
     this.application = application;
@@ -33,27 +33,22 @@ public class ApplicationContext {
 
     // initialize services
     final StorageServiceFactory storageServiceFactory = new StorageServiceFactory();
-    this.applicationConfigurationService = new ApplicationConfigurationService(
+    this.configurationService = new ConfigurationService(
         storageServiceFactory.createUnsecuredStorage(), storageServiceFactory.createSecuredStorage()
     );
     this.gitHubNotificationService = new GitHubNotificationService(this);
-    this.gitHubAuthService = new GitHubAuthService(applicationConfigurationService.load().block());
-    this.workScheduler = Schedulers.newElastic("ghn");
-  }
-
-  public HostServices getHostServices() {
-    return application.getHostServices();
-  }
-
-
-  public ApplicationConfigurationService getConfigurationService() {
-    return applicationConfigurationService;
+    this.gitHubAuthService = new GitHubAuthService(configurationService.load().block());
+    this.categoryService = new CategoryService(storageServiceFactory.createUnsecuredStorage());
   }
 
   public Configuration getConfiguration() {
     // config is already loaded in-memory here
-    return applicationConfigurationService.load().block();
+    return configurationService.load().block();
   }
+
+  //-----------
+  // App data
+  //-----------
 
   public User getUser() {
     return user.get();
@@ -61,6 +56,22 @@ public class ApplicationContext {
 
   public void setUser(final User user) {
     this.user.set(user);
+  }
+
+  public Stage getPrimaryStage() {
+    return primaryStage;
+  }
+
+  //-----------
+  // services
+  //-----------
+
+  public HostServices getHostServices() {
+    return application.getHostServices();
+  }
+
+  public ConfigurationService getConfigurationService() {
+    return configurationService;
   }
 
   public GitHubAuthService getGitHubAuthService() {
@@ -71,11 +82,7 @@ public class ApplicationContext {
     return gitHubNotificationService;
   }
 
-  public Stage getPrimaryStage() {
-    return primaryStage;
-  }
-
-  public Scheduler getWorkScheduler() {
-    return workScheduler;
+  public CategoryService getCategoryService() {
+    return categoryService;
   }
 }

@@ -27,15 +27,14 @@ abstract class CryptoBackedStorageService implements SecureStorageService {
   }
 
   @Override
-  public <O extends AbstractModel & Persisted> Mono<Void> write(
-      final Class<? extends AbstractModel> type, final O value) {
+  public <O extends AbstractModel & Persisted> Mono<Void> write(final O value) {
     return Mono.defer(() -> Mono.just(marshall(value))
         // protect data + encode in b64
-        .map(serialized -> wrap(type, value.getId(), serialized))
+        .map(serialized -> wrap(value.getClass(), value.getId(), serialized))
         // save data
         .flatMap(secureEntry -> {
           try {
-            return decorated.write(type, secureEntry);
+            return decorated.write(secureEntry);
           } catch (final Exception e) {
             LOGGER.error("unable to save property", e);
             return Mono.error(e);

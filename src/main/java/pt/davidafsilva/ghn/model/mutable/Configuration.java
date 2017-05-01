@@ -1,9 +1,10 @@
 package pt.davidafsilva.ghn.model.mutable;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Duration;
-import java.util.UUID;
 
 import pt.davidafsilva.ghn.model.AbstractModel;
 import pt.davidafsilva.ghn.model.Persisted;
@@ -19,11 +20,8 @@ public class Configuration extends AbstractModel implements Persisted {
   @JsonIgnore
   private SecuredConfiguration securedConfiguration = new SecuredConfiguration();
 
-  public Configuration() {
-    this(UUID.randomUUID().toString());
-  }
-
-  public Configuration(final String id) {
+  @JsonCreator
+  public Configuration(@JsonProperty(value = "id", required = true) final String id) {
     this.id = id;
   }
 
@@ -36,26 +34,23 @@ public class Configuration extends AbstractModel implements Persisted {
     return githubUrl;
   }
 
-  public Configuration setGithubUrl(final String githubUrl) {
+  public void setGithubUrl(final String githubUrl) {
     this.githubUrl = githubUrl;
-    return this;
   }
 
   public Duration getTimeout() {
     return timeout;
   }
 
-  public Configuration setTimeout(final Duration timeout) {
+  public void setTimeout(final Duration timeout) {
     this.timeout = timeout;
-    return this;
   }
 
   public SecuredConfiguration getSecuredConfiguration() {
     return securedConfiguration;
   }
 
-  public Configuration setSecuredConfiguration(final SecuredConfiguration securedConfiguration) {
+  public void setSecuredConfiguration(final SecuredConfiguration securedConfiguration) {
     this.securedConfiguration = securedConfiguration;
-    return this;
   }
 }

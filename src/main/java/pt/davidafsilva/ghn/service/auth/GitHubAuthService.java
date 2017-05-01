@@ -14,6 +14,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import pt.davidafsilva.ghn.model.User;
 import pt.davidafsilva.ghn.model.mutable.Configuration;
 import pt.davidafsilva.ghn.service.AbstractGitHubService;
+import pt.davidafsilva.ghn.util.Schedulers;
 import reactor.core.publisher.Mono;
 import reactor.ipc.netty.http.client.HttpClient;
 import reactor.ipc.netty.http.client.HttpClientRequest;
@@ -65,7 +66,8 @@ public class GitHubAuthService extends AbstractGitHubService {
         .flatMap(r -> decodeJson(r, new ObjectMapper()))
         .filter(json -> json.has("token"))
         .map(json -> json.get("token").asText())
-        .next();
+        .next()
+        .subscribeOn(Schedulers.io());
   }
 
   private Mono<User> doLogin(final String u, final String p, final String c,
@@ -77,7 +79,8 @@ public class GitHubAuthService extends AbstractGitHubService {
         .filter(r -> r.status() == HttpResponseStatus.OK)
         .flatMap(r -> decodeJson(r, new ObjectMapper()))
         .map(json -> new User(getUsername(json), p, getAvatarUrl(json).orElse(null)))
-        .next();
+        .next()
+        .subscribeOn(Schedulers.io());
   }
 
   private String getUsername(final JsonNode json) {
