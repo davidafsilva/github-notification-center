@@ -37,7 +37,7 @@ public class ApplicationContext {
         storageServiceFactory.createUnsecuredStorage(), storageServiceFactory.createSecuredStorage()
     );
     this.gitHubNotificationService = new GitHubNotificationService(this);
-    this.gitHubAuthService = new GitHubAuthService(applicationConfigurationService.load());
+    this.gitHubAuthService = new GitHubAuthService(applicationConfigurationService.load().block());
     this.workScheduler = Schedulers.newElastic("ghn");
   }
 
@@ -51,7 +51,8 @@ public class ApplicationContext {
   }
 
   public Configuration getConfiguration() {
-    return applicationConfigurationService.load();
+    // config is already loaded in-memory here
+    return applicationConfigurationService.load().block();
   }
 
   public User getUser() {

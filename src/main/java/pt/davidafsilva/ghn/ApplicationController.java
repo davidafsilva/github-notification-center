@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import pt.davidafsilva.ghn.model.User;
 import pt.davidafsilva.ghn.ui.login.LoginController;
 import pt.davidafsilva.ghn.ui.login.LoginView;
 import pt.davidafsilva.ghn.ui.main.NotificationsController;
@@ -39,11 +40,11 @@ public class ApplicationController {
     final ApplicationController appController = new ApplicationController(application,
         primaryStage);
     CONTROLLER.set(appController);
-    appController.showLoginView(primaryStage);
+    //appController.showLoginView(primaryStage);
 
-    //appController.ctx.setUser(
-    //    new User("davidafsilva", "xxx", "https://avatars1.githubusercontent.com/u/2266642?v=3"));
-    //appController.showMainView();
+    appController.ctx.setUser(
+        new User("davidafsilva", "xxx", "https://avatars1.githubusercontent.com/u/2266642?v=3"));
+    appController.showMainView();
   }
 
   static void stop() {

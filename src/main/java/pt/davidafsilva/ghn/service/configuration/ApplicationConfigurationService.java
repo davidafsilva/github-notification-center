@@ -1,5 +1,7 @@
 package pt.davidafsilva.ghn.service.configuration;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import pt.davidafsilva.ghn.model.mutable.Configuration;
 import pt.davidafsilva.ghn.model.mutable.SecuredConfiguration;
 import pt.davidafsilva.ghn.service.storage.SecureStorageService;
@@ -15,7 +17,7 @@ public class ApplicationConfigurationService {
   private final StorageService storageService;
   private final SecureStorageService secureStorageService;
 
-  private Configuration configuration;
+  private AtomicReference<Configuration> configuration = new AtomicReference<>();
 
   public ApplicationConfigurationService(
       final StorageService storageService,
@@ -24,36 +26,39 @@ public class ApplicationConfigurationService {
     this.secureStorageService = secureStorageService;
   }
 
-  public Configuration load() {
-    if (configuration == null) {
-      configuration = loadConfiguration();
+  public Mono<Configuration> load() {
+    if (configuration.get() == null) {
+      return loadConfiguration()
+          .doOnNext(configuration::set);
     }
-    return configuration;
+    return Mono.just(configuration.get());
   }
 
-  private Configuration loadConfiguration() {
+  private Mono<Configuration> loadConfiguration() {
     // load unsecure bit
-    final Configuration configuration = storageService.readAll(Configuration.class)
+    return storageService.readAll(Configuration.class)
         .next()
         .subscribe()
         .otherwiseIfEmpty(Mono.defer(() -> Mono.just(new Configuration())))
-        .block();
-
-    // load secure bit
-    secureStorageService.read(SecuredConfiguration.class, SecuredConfiguration.ID)
-        .doOnNext(configuration::setSecuredConfiguration)
-        .subscribe()
-        .block();
-
-    return configuration;
+        // then load the secure bit
+        .then(cfg -> secureStorageService.read(SecuredConfiguration.class, SecuredConfiguration.ID)
+            .doOnNext(cfg::setSecuredConfiguration)
+            .map(s -> cfg))
+        .subscribe();
   }
 
   public Mono<Void> save(final Configuration configuration) {
-    this.configuration = configuration;
+    this.configuration.set(configuration);
+
+    // unsecure config
     final Mono<Void> unsecureSave = storageService.write(Configuration.class, configuration);
-    final Mono<Void> secureSave = configuration.getSecuredConfiguration() == null ?
-        Mono.empty() :
-        secureStorageService.write(SecuredConfiguration.class, configuration.getSecuredConfiguration());
+
+    // secure config
+    final SecuredConfiguration secureConfig = configuration.getSecuredConfiguration();
+    final Mono<Void> secureSave = secureConfig == null ? Mono.empty() :
+        secureStorageService.write(SecuredConfiguration.class, secureConfig);
+
+    // merge both saves
     return Flux.merge(unsecureSave, secureSave)
         .then()
         .subscribe();

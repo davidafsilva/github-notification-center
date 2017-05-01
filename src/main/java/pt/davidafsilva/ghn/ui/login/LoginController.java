@@ -110,12 +110,12 @@ public class LoginController {
         .subscribe();
   }
 
-  private void saveToken(final String token) {
+  private Mono<Void> saveToken(final String token) {
     // set the token
     final Configuration configuration = appContext.getConfiguration();
     configuration.getSecuredConfiguration().setToken(token);
 
     // save the token
-    appContext.getConfigurationService().save(configuration);
+    return appContext.getConfigurationService().save(configuration);
   }
 }
