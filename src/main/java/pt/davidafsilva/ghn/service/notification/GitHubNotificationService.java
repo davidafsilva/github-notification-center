@@ -19,6 +19,7 @@ import java.util.stream.StreamSupport;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import pt.davidafsilva.ghn.ApplicationContext;
 import pt.davidafsilva.ghn.model.Notification;
+import pt.davidafsilva.ghn.model.filter.pre.PreFilter;
 import pt.davidafsilva.ghn.service.AbstractGitHubService;
 import pt.davidafsilva.ghn.util.Schedulers;
 import reactor.core.Exceptions;
@@ -50,8 +51,9 @@ public class GitHubNotificationService extends AbstractGitHubService {
     this.baseUrl = context.getConfiguration().getGithubUrl() + NOTIFICATIONS_PATH;
   }
 
-  public Flux<Notification> getNotifications(final NotificationFilter filter) {
-    return client.get(filter.addParametersTo(baseUrl), this::sendRequest)
+  public Flux<Notification> getNotifications(final PreFilter filter) {
+    final String url = filter.appendTo(baseUrl);
+    return client.get(url, this::sendRequest)
         .mapError(this::isUnauthorizedOrForbidden, UnauthorizedRequestException::new)
         .filter(r -> r.status() == HttpResponseStatus.OK)
         .flatMap(this::unmarshall)

@@ -81,6 +81,11 @@ public class NotificationsController {
     return category;
   }
 
+  public void createCategory(final Category category) {
+    // TODO: change me - auto-generated block
+
+  }
+
   public void loadNotifications() {
     //FIXME
   }

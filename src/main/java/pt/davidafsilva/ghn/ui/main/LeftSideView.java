@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXToggleButton;
 
+import org.controlsfx.control.PopOver;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -41,8 +42,10 @@ class LeftSideView extends BorderPane {
   private final ObservableMap<String, CategoryItem> categoriesMap = FXCollections
       .observableMap(new TreeMap<String, CategoryItem>(Comparator.naturalOrder()));
 
+  private HBox createCategoryBox;
   private JFXListView<CategoryItem> categories;
   private JFXToggleButton editButton;
+  private PopOver createCategoryDialog;
 
   LeftSideView(final NotificationsController controller) {
     this.controller = controller;
@@ -194,22 +197,28 @@ class LeftSideView extends BorderPane {
     container.setCenter(loadingCategories);
 
     // create category
-    final HBox createCategory = new HBox();
-    createCategory.getStyleClass().add("ghn-create-category");
+    createCategoryBox = new HBox();
+    createCategoryBox.getStyleClass().add("ghn-create-category");
     final GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
     final Node plusSign = fontAwesome.create(FontAwesome.Glyph.PLUS_CIRCLE).size(15);
     final Label createLabel = new Label("Create Category");
-    createCategory.getChildren().addAll(plusSign, createLabel);
-    createCategory.visibleProperty().bind(editButton.selectedProperty());
-    createCategory.setOnMousePressed(e -> showCreateCategoryView());
-    createCategory.setOnTouchPressed(e -> showCreateCategoryView());
-    container.setBottom(createCategory);
+    createCategoryBox.getChildren().addAll(plusSign, createLabel);
+    createCategoryBox.visibleProperty().bind(editButton.selectedProperty());
+    createCategoryBox.setOnMousePressed(e -> showCreateCategoryView());
+    createCategoryBox.setOnTouchPressed(e -> showCreateCategoryView());
+    container.setBottom(createCategoryBox);
+
+    createCategoryDialog = new PopOver();
+    createCategoryDialog.setArrowLocation(PopOver.ArrowLocation.LEFT_BOTTOM);
 
     return container;
   }
 
   private void showCreateCategoryView() {
-    // FIXME: implement
+    final Node contents = new CreateCategoryView(controller::createCategory,
+        createCategoryDialog::hide);
+    createCategoryDialog.setContentNode(contents);
+    createCategoryDialog.show(createCategoryBox);
   }
 
   void updateCategory(final String name, final Category category) {

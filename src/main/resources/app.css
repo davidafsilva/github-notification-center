@@ -204,3 +204,7 @@
     -fx-padding: 10 0 0 0;
     -fx-spacing: 5;
 }
+
+.ghn-create-category-pane {
+    -fx-padding: 10;
+}
