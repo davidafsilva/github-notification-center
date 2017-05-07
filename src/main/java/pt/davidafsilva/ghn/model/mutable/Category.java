@@ -3,8 +3,11 @@ package pt.davidafsilva.ghn.model.mutable;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Optional;
+
 import pt.davidafsilva.ghn.model.AbstractModel;
 import pt.davidafsilva.ghn.model.Persisted;
+import pt.davidafsilva.ghn.model.filter.post.PostFilter;
 
 /**
  * @author david
@@ -16,6 +19,7 @@ public class Category extends AbstractModel implements Persisted {
   private boolean isEditable;
   private boolean isDeletable;
   private int unreadCount;
+  private PostFilter postFilter;
 
   @JsonCreator
   public Category(@JsonProperty(value = "id", required = true) final String id) {
@@ -57,5 +61,13 @@ public class Category extends AbstractModel implements Persisted {
 
   public void setUnreadCount(final int unreadCount) {
     this.unreadCount = unreadCount;
+  }
+
+  public Optional<PostFilter> getPostFilter() {
+    return Optional.ofNullable(postFilter);
+  }
+
+  public void setPostFilter(final PostFilter postFilter) {
+    this.postFilter = postFilter;
   }
 }

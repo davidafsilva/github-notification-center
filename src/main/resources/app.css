@@ -207,4 +207,42 @@
 
 .ghn-create-category-pane {
     -fx-padding: 10;
+    -fx-pref-width: 500;
+}
+
+.ghn-create-category-pane-bottom {
+    -fx-padding: 30 10 10 0;
+    -fx-spacing: 5;
+}
+
+.ghn-create-category-pane-bottom .ghn-button {
+    -fx-pref-width: 70;
+}
+
+.ghn-create-category-pane-filter-label {
+    -fx-padding: 20;
+}
+.ghn-create-category-pane-filter-label .label {
+    -fx-font-size: 13px;
+    -fx-font-family: Arial, Helvetica, sans-serif;
+}
+
+.ghn-filter-pane .jfx-combo-box .jfx-list-cell:hover {
+    -fx-background-color: rgb(165, 181, 198);
+}
+
+.ghn-filter-pane .jfx-combo-box .jfx-list-cell:hover .label {
+    -fx-text-fill: white;
+}
+
+.ghn-filter-pane .jfx-combo-box .jfx-list-cell:selected {
+    -fx-background-color: rgb(76,86,96);
+}
+
+.ghn-filter-pane .jfx-combo-box .jfx-list-cell:selected .label {
+    -fx-text-fill: white;
+}
+
+.ghn-filter-pane .jfx-text-field {
+    -fx-padding: 7 0 0 0;
 }

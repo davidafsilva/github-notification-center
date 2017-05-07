@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import pt.davidafsilva.ghn.ApplicationContext;
 import pt.davidafsilva.ghn.ApplicationController;
 import pt.davidafsilva.ghn.model.User;
+import pt.davidafsilva.ghn.model.filter.post.PostFilter;
 import pt.davidafsilva.ghn.model.mutable.Category;
 import pt.davidafsilva.ghn.model.mutable.Configuration;
 import pt.davidafsilva.ghn.service.category.CategoryService;
@@ -81,7 +82,7 @@ public class NotificationsController {
     return category;
   }
 
-  public void createCategory(final Category category) {
+  public void createCategory(final String name, final PostFilter filter) {
     // TODO: change me - auto-generated block
 
   }

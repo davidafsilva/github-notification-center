@@ -27,6 +27,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import pt.davidafsilva.ghn.model.mutable.Category;
@@ -210,13 +211,16 @@ class LeftSideView extends BorderPane {
 
     createCategoryDialog = new PopOver();
     createCategoryDialog.setArrowLocation(PopOver.ArrowLocation.LEFT_BOTTOM);
+    createCategoryDialog.setDetachable(false);
 
     return container;
   }
 
   private void showCreateCategoryView() {
-    final Node contents = new CreateCategoryView(controller::createCategory,
+    final Pane contents = new CreateEditCategoryView(controller::createCategory,
         createCategoryDialog::hide);
+    contents.prefHeightProperty().bind(heightProperty().subtract(150));
+    createCategoryDialog.setTitle("Create Category");
     createCategoryDialog.setContentNode(contents);
     createCategoryDialog.show(createCategoryBox);
   }
