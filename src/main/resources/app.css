@@ -108,11 +108,17 @@
 .ghn-category-item .label {
     -fx-text-fill: rgb(200, 201, 203);
 }
+
+.trash-can {
+    -fx-cursor: hand;
+}
+
 .ghn-category-item .trash-can-enabled {
     -fx-cursor: hand;
     -fx-text-fill: rgb(204, 94, 94);
 }
 .ghn-category-item .trash-can-disabled {
+    -fx-cursor: default;
     -fx-text-fill: rgb(67, 72, 79);
 }
 
@@ -245,4 +251,8 @@
 
 .ghn-filter-pane .jfx-text-field {
     -fx-padding: 7 0 0 0;
+}
+
+.ghn-filter-pane .trash-can {
+    -fx-text-fill: rgb(221,113,92);
 }
