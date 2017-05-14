@@ -217,7 +217,9 @@ class LeftSideView extends BorderPane {
   }
 
   private void showCreateCategoryView() {
-    final Pane contents = new CreateEditCategoryView(controller::createCategory,
+    final Pane contents = new CreateEditCategoryView(
+        n -> categoriesMap.containsKey(n.toLowerCase()),
+        controller::createCategory,
         createCategoryDialog::hide);
     contents.prefHeightProperty().bind(heightProperty().subtract(150));
     createCategoryDialog.setTitle("Create Category");
@@ -228,7 +230,7 @@ class LeftSideView extends BorderPane {
   void updateCategory(final String name, final Category category) {
     if (Objects.equals(name, category.getName())) {
       // name not updated
-      Platform.runLater(() -> categoriesMap.computeIfPresent(name, (k, e) -> {
+      Platform.runLater(() -> categoriesMap.computeIfPresent(name.toLowerCase(), (k, e) -> {
         e.editablePropertyProperty().unbind();
         final CategoryItem item = new CategoryItem(category);
         item.editablePropertyProperty().bind(editButton.selectedProperty());
@@ -252,7 +254,7 @@ class LeftSideView extends BorderPane {
     }
     final CategoryItem item = new CategoryItem(category);
     item.editablePropertyProperty().bind(editButton.selectedProperty());
-    Platform.runLater(() -> categoriesMap.put(category.getName(), item));
+    Platform.runLater(() -> categoriesMap.put(category.getName().toLowerCase(), item));
   }
 
   void removeCategory(final Category category) {
@@ -260,7 +262,7 @@ class LeftSideView extends BorderPane {
   }
 
   private void removeCategory(final String name) {
-    Platform.runLater(() -> categoriesMap.remove(name));
+    Platform.runLater(() -> categoriesMap.remove(name.toLowerCase()));
   }
 
   boolean hasCategories() {

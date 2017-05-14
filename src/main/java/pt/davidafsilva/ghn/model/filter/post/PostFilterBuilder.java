@@ -97,5 +97,5 @@ public class PostFilterBuilder {
     return finalFilter;
   }
 
-  interface FilterOperator extends BinaryOperator<PostFilter> {}
+  public interface FilterOperator extends BinaryOperator<PostFilter> {}
 }
