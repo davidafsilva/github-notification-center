@@ -16,9 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -192,7 +191,7 @@ class FiltersPane extends GridPane {
     }
   }
 
-  Optional<PostFilter> getCurrentFilter(final BiConsumer<Node, String> showError) {
+  Optional<PostFilter> getCurrentFilter(final Consumer<Node> markAsRequired) {
     final PostFilterBuilder builder = new PostFilterBuilder();
     final Map<Node, List<String>> errors = new LinkedHashMap<>();
     for (int row = 0; row < currentRows; row++) {
@@ -201,9 +200,7 @@ class FiltersPane extends GridPane {
 
     // show errors
     if (!errors.isEmpty()) {
-      errors.forEach((n, e) -> showError.accept(n, e.stream()
-          .map(s -> "- " + s)
-          .collect(Collectors.joining(System.lineSeparator()))));
+      errors.forEach((n, e) -> markAsRequired.accept(n));
       return Optional.empty();
     }
 
@@ -215,23 +212,26 @@ class FiltersPane extends GridPane {
     final int offset = row * 5;
 
     // get the fields
-    final PostFilterBuilder.FilterOperator operator = getOperator(getChildren().get(offset));
-    final FilterType filterType = getFilterType(getChildren().get(offset + 1));
-    final StringFnType strFnType = getStringFnType(getChildren().get(offset + 2));
+    final Node operatorField = getChildren().get(offset);
+    final PostFilterBuilder.FilterOperator operator = getOperator(operatorField);
+    final Node filterTypeField = getChildren().get(offset + 1);
+    final FilterType filterType = getFilterType(filterTypeField);
+    final Node strFnTypeField = getChildren().get(offset + 2);
+    final StringFnType strFnType = getStringFnType(strFnTypeField);
     final Node textField = getChildren().get(offset + 3);
     final String textFilter = getTextFilter(textField);
 
     // validate
     if (operator == null) {
-      errors.computeIfAbsent(textField, k -> new ArrayList<>())
+      errors.computeIfAbsent(operatorField, k -> new ArrayList<>())
           .add("Please choose a valid operator");
     }
     if (filterType == null) {
-      errors.computeIfAbsent(textField, k -> new ArrayList<>())
+      errors.computeIfAbsent(filterTypeField, k -> new ArrayList<>())
           .add("Please choose a valid filter type");
     }
     if (strFnType == null) {
-      errors.computeIfAbsent(textField, k -> new ArrayList<>())
+      errors.computeIfAbsent(strFnTypeField, k -> new ArrayList<>())
           .add("Please choose a valid string function");
     }
 

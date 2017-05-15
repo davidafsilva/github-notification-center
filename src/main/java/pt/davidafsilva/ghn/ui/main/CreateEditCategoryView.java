@@ -94,19 +94,30 @@ class CreateEditCategoryView extends BorderPane {
     final String name = nameField.textProperty().getValueSafe().trim();
 
     // validate name
-    if (name.isEmpty()) {
-      showError(nameField, "Invalid name");
-      nameField.requestFocus();
-      return;
-    } else if (categoryWithNameExists.test(name)) {
-      showError(nameField, "There's already a category with the same name");
-      nameField.requestFocus();
-      return;
-    }
+    boolean isDuplicated = false;
+    final boolean hasNameError = name.isEmpty() || (isDuplicated = categoryWithNameExists.test(name));
 
     // get the filter and call the callback
-    filtersPane.getCurrentFilter(this::showError)
+    filtersPane.getCurrentFilter(this::markFieldAsMissingValue)
+        .filter(p -> hasNameError)
         .ifPresent(filter -> saveCallback.accept(name, filter));
+
+    // show name field error
+    if (hasNameError) {
+      markFieldAsMissingValue(nameField);
+      if (isDuplicated) {
+        showError(nameField, "There's already a category with the same name");
+      }
+      nameField.requestFocus();
+    }
+  }
+
+  private void markFieldAsMissingValue(final Node field) {
+    if (!field.getStyleClass().contains("ghn-field-error")) {
+      field.getStyleClass().add("ghn-field-error");
+      Schedulers.timer().schedule(() -> Platform.runLater(() ->
+              field.getStyleClass().remove("ghn-field-error")), 5, TimeUnit.SECONDS);
+    }
   }
 
   private void showError(final Node container, final String message) {
