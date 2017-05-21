@@ -1,5 +1,6 @@
 package pt.davidafsilva.ghn.model.filter.post;
 
+import java.io.Serializable;
 import java.util.Stack;
 import java.util.function.BinaryOperator;
 
@@ -8,7 +9,7 @@ import java.util.function.BinaryOperator;
  */
 public class PostFilterBuilder {
 
-  private static final PostFilter NO_FILTER = notification -> true;
+  private static final PostFilter NO_FILTER = n->true;
 
   // the initial filter
   private FilterOperator operator = PostFilter::and;
@@ -97,5 +98,5 @@ public class PostFilterBuilder {
     return finalFilter;
   }
 
-  public interface FilterOperator extends BinaryOperator<PostFilter> {}
+  public interface FilterOperator extends BinaryOperator<PostFilter>, Serializable {}
 }

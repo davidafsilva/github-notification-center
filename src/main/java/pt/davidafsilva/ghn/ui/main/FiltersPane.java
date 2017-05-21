@@ -128,14 +128,14 @@ class FiltersPane extends GridPane {
   }
 
   private Node createFilterTextMatchTypeChoice() {
-    final JFXComboBox<Label> filterTypeCombo = new JFXComboBox<>();
-    filterTypeCombo.setPrefWidth(150);
-    filterTypeCombo.setPromptText("Match");
-    filterTypeCombo.setTooltip(new Tooltip("Choose the desired string matching function"));
+    final JFXComboBox<Label> strFnCombo = new JFXComboBox<>();
+    strFnCombo.setPrefWidth(150);
+    strFnCombo.setPromptText("Match");
+    strFnCombo.setTooltip(new Tooltip("Choose the desired string matching function"));
     STR_MATCH_FUNCTIONS.stream()
         .map(ft -> new Label(ft.description))
-        .forEach(filterTypeCombo.getItems()::add);
-    return filterTypeCombo;
+        .forEach(strFnCombo.getItems()::add);
+    return strFnCombo;
   }
 
   private Node createFilterTextField() {
@@ -177,7 +177,9 @@ class FiltersPane extends GridPane {
     }
 
     // remove nodes from row
-    getChildren().removeAll(deleteNodes);
+    if (!deleteNodes.isEmpty()) {
+      getChildren().removeAll(deleteNodes);
+    }
 
     // decrement row number
     currentRows--;
@@ -294,7 +296,7 @@ class FiltersPane extends GridPane {
     PATTERN("Pattern", StringFilter::regex);
 
     private final String description;
-    private final Function<String , StringFilter> mapper;
+    private final Function<String, StringFilter> mapper;
 
     StringFnType(final String description,
         final Function<String, StringFilter> mapper) {

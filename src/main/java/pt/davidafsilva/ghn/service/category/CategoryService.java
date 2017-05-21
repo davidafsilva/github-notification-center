@@ -28,4 +28,10 @@ public class CategoryService {
         .then(Mono.just(category))
         .subscribe();
   }
+
+  public Mono<Void> delete(final Category category) {
+    return storageService.delete(category)
+        .subscribeOn(Schedulers.io())
+        .subscribe();
+  }
 }

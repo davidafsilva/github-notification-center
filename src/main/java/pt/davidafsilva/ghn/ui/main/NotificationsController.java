@@ -82,9 +82,21 @@ public class NotificationsController {
     return category;
   }
 
-  public void createCategory(final String name, final PostFilter filter) {
-    // TODO: change me - auto-generated block
+  void createCategory(final String name, final PostFilter filter) {
+    final Category category = new Category(UUID.randomUUID().toString());
+    category.setName(name);
+    category.setPostFilter(filter);
+    category.setEditable(true);
+    category.setDeletable(true);
+    appContext.getCategoryService().save(category)
+        .doOnError(e -> notificationsView.onCategorySaveComplete(e.getMessage()))
+        .doOnNext(notificationsView::addCategory)
+        .doOnSuccess(c -> notificationsView.onCategorySaveComplete(null));
+  }
 
+  void deleteCategory(final Category category) {
+    appContext.getCategoryService().delete(category)
+        .doOnSuccess(v -> notificationsView.removeCategory(category));
   }
 
   public void loadNotifications() {

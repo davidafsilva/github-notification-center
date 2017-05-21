@@ -212,6 +212,9 @@ class LeftSideView extends BorderPane {
     createCategoryDialog = new PopOver();
     createCategoryDialog.setArrowLocation(PopOver.ArrowLocation.LEFT_BOTTOM);
     createCategoryDialog.setDetachable(false);
+    createCategoryDialog.setHideOnEscape(false);
+    createCategoryDialog.setHeaderAlwaysVisible(false);
+    createCategoryDialog.setAutoHide(false);
 
     return container;
   }
@@ -254,6 +257,7 @@ class LeftSideView extends BorderPane {
     }
     final CategoryItem item = new CategoryItem(category);
     item.editablePropertyProperty().bind(editButton.selectedProperty());
+    item.setOnDelete(controller::deleteCategory);
     Platform.runLater(() -> categoriesMap.put(category.getName().toLowerCase(), item));
   }
 
@@ -267,5 +271,14 @@ class LeftSideView extends BorderPane {
 
   boolean hasCategories() {
     return !categoriesMap.isEmpty();
+  }
+
+  void onCategorySaveComplete(final String errorMessage) {
+    final CreateEditCategoryView view = (CreateEditCategoryView) createCategoryDialog
+        .getContentNode();
+    view.onCategorySaveComplete(errorMessage);
+    if (errorMessage == null) {
+      createCategoryDialog.hide();
+    }
   }
 }

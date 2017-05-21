@@ -16,4 +16,6 @@ public interface StorageService {
 
   <O extends AbstractModel & Persisted> Mono<Void> write(final O value);
 
+  <O extends AbstractModel & Persisted> Mono<Void> delete(final O value);
+
 }

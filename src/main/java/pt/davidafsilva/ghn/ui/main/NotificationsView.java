@@ -39,4 +39,8 @@ public class NotificationsView extends BorderPane {
   boolean hasCategories() {
     return leftSideView.hasCategories();
   }
+
+  void onCategorySaveComplete(final String errorMessage) {
+    leftSideView.onCategorySaveComplete(errorMessage);
+  }
 }
