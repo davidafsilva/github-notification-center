@@ -43,6 +43,11 @@ abstract class CryptoBackedStorageService implements SecureStorageService {
   }
 
   @Override
+  public <O extends AbstractModel & Persisted> Mono<Void> delete(final O value) {
+    return decorated.delete(value);
+  }
+
+  @Override
   public <O extends AbstractModel & Persisted> Flux<O> readAll(final Class<O> type) {
     try {
       // read data

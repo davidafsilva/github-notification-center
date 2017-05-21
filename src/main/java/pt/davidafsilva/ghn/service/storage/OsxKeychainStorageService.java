@@ -69,4 +69,18 @@ class OsxKeychainStorageService implements SecureStorageService {
       }
     });
   }
+
+  @Override
+  public <O extends AbstractModel & Persisted> Mono<Void> delete(final O value) {
+    return Mono.defer(() -> {
+      try {
+        // remove the record in keychain
+        keychain.deleteGenericPassword(value.getId(), username);
+        return Mono.empty();
+      } catch (final Exception e) {
+        LOGGER.error("unable to save property", e);
+        return Mono.error(e);
+      }
+    });
+  }
 }

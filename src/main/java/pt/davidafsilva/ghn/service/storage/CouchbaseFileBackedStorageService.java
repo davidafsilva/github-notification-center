@@ -129,6 +129,20 @@ class CouchbaseFileBackedStorageService implements StorageService {
     }
   }
 
+  @Override
+  public <O extends AbstractModel & Persisted> Mono<Void> delete(final O value) {
+    // get the database ref
+    final Database database = DatabaseHolder.database;
+    try {
+      final Document document = database.getDocument(value.getId());
+      document.delete();
+      return Mono.empty();
+    } catch (final CouchbaseLiteException e) {
+      LOGGER.error("unable to save id: {}", value.getId());
+      return Mono.error(e);
+    }
+  }
+
   private static <O extends AbstractModel & Persisted> View view(
       final Class<O> clazz) throws CouchbaseLiteException {
     final View view = DatabaseHolder.database.getView(clazz.getSimpleName() + "TypeView");

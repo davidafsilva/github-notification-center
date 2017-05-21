@@ -1,5 +1,8 @@
 package pt.davidafsilva.ghn.ui.main;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.UUID;
 
 import javafx.application.Platform;
@@ -17,6 +20,8 @@ import reactor.core.publisher.Mono;
  * @author david
  */
 public class NotificationsController {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(NotificationsController.class);
 
   private static final String GITHUB_REPO =
       "https://github.com/davidafsilva/github-notification-center";
@@ -91,12 +96,15 @@ public class NotificationsController {
     appContext.getCategoryService().save(category)
         .doOnError(e -> notificationsView.onCategorySaveComplete(e.getMessage()))
         .doOnNext(notificationsView::addCategory)
-        .doOnSuccess(c -> notificationsView.onCategorySaveComplete(null));
+        .doOnSuccess(c -> notificationsView.onCategorySaveComplete(null))
+        .subscribe();
   }
 
   void deleteCategory(final Category category) {
     appContext.getCategoryService().delete(category)
-        .doOnSuccess(v -> notificationsView.removeCategory(category));
+        .doOnError(e -> LOGGER.error("unable to delete category", e))
+        .doOnSuccess(v -> notificationsView.removeCategory(category))
+        .subscribe();
   }
 
   public void loadNotifications() {
