@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import javafx.application.Platform;
 import pt.davidafsilva.ghn.ApplicationContext;
@@ -93,9 +94,22 @@ public class NotificationsController {
     category.setPostFilter(filter);
     category.setEditable(true);
     category.setDeletable(true);
+    saveUpdateCategory(category, notificationsView::addCategory);
+  }
+
+  void updateCategory(final Category prev, final String name, final PostFilter filter) {
+    final Category category = new Category(prev.getId());
+    category.setName(name);
+    category.setPostFilter(filter);
+    category.setEditable(true);
+    category.setDeletable(true);
+    saveUpdateCategory(category, c -> notificationsView.updateCategory(prev.getName(), c));
+  }
+
+  private void saveUpdateCategory(final Category category, final Consumer<Category> saveConsumer) {
     appContext.getCategoryService().save(category)
         .doOnError(e -> notificationsView.onCategorySaveComplete(e.getMessage()))
-        .doOnNext(notificationsView::addCategory)
+        .doOnNext(saveConsumer)
         .doOnSuccess(c -> notificationsView.onCategorySaveComplete(null))
         .subscribe();
   }

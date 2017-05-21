@@ -109,15 +109,29 @@
     -fx-text-fill: rgb(200, 201, 203);
 }
 
-.trash-can {
+.ghn-category-item .trash-can {
+    -fx-cursor: hand;
+}
+
+.ghn-category-item .edit {
     -fx-cursor: hand;
 }
 
 .ghn-category-item .trash-can-enabled {
+     -fx-cursor: hand;
+     -fx-text-fill: rgb(204, 94, 94);
+ }
+
+ .ghn-category-item .trash-can-disabled {
+     -fx-cursor: default;
+     -fx-text-fill: rgb(67, 72, 79);
+ }
+
+.ghn-category-item .edit-enabled {
     -fx-cursor: hand;
-    -fx-text-fill: rgb(204, 94, 94);
+    -fx-text-fill: rgb(204, 177, 94);
 }
-.ghn-category-item .trash-can-disabled {
+.ghn-category-item .edit-disabled {
     -fx-cursor: default;
     -fx-text-fill: rgb(67, 72, 79);
 }

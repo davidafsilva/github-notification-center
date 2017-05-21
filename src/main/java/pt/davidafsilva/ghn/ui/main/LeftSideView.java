@@ -27,7 +27,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import pt.davidafsilva.ghn.model.mutable.Category;
@@ -205,12 +204,11 @@ class LeftSideView extends BorderPane {
     final Label createLabel = new Label("Create Category");
     createCategoryBox.getChildren().addAll(plusSign, createLabel);
     createCategoryBox.visibleProperty().bind(editButton.selectedProperty());
-    createCategoryBox.setOnMousePressed(e -> showCreateCategoryView());
-    createCategoryBox.setOnTouchPressed(e -> showCreateCategoryView());
+    createCategoryBox.setOnMousePressed(e -> showCreateEditCategoryView(null, null));
+    createCategoryBox.setOnTouchPressed(e -> showCreateEditCategoryView(null, null));
     container.setBottom(createCategoryBox);
 
     createCategoryDialog = new PopOver();
-    createCategoryDialog.setArrowLocation(PopOver.ArrowLocation.LEFT_BOTTOM);
     createCategoryDialog.setDetachable(false);
     createCategoryDialog.setHideOnEscape(false);
     createCategoryDialog.setHeaderAlwaysVisible(false);
@@ -219,15 +217,34 @@ class LeftSideView extends BorderPane {
     return container;
   }
 
-  private void showCreateCategoryView() {
-    final Pane contents = new CreateEditCategoryView(
-        n -> categoriesMap.containsKey(n.toLowerCase()),
-        controller::createCategory,
+  private void showCreateEditCategoryView(final CategoryItem item, final Category category) {
+    final CreateEditCategoryView contents = new CreateEditCategoryView(
+        n -> existsCategoryWithName(n, item),
+        (n, f) -> {
+          if (category == null) {
+            controller.createCategory(n, f);
+          } else {
+            controller.updateCategory(category, n, f);
+          }
+        },
         createCategoryDialog::hide);
     contents.prefHeightProperty().bind(heightProperty().subtract(150));
-    createCategoryDialog.setTitle("Create Category");
+    contents.setEditingCategory(category);
     createCategoryDialog.setContentNode(contents);
-    createCategoryDialog.show(createCategoryBox);
+    if (category == null || item == null) {
+      createCategoryDialog.setTitle("Create Category");
+      createCategoryDialog.setArrowLocation(PopOver.ArrowLocation.LEFT_BOTTOM);
+      createCategoryDialog.show(createCategoryBox);
+    } else {
+      createCategoryDialog.setTitle("Edit Category");
+      createCategoryDialog.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
+      createCategoryDialog.show(item);
+    }
+  }
+
+  private boolean existsCategoryWithName(final String name, final CategoryItem editingCategory) {
+    final CategoryItem existent = categoriesMap.get(name.toLowerCase());
+    return existent != null && existent != editingCategory;
   }
 
   void updateCategory(final String name, final Category category) {
@@ -235,9 +252,7 @@ class LeftSideView extends BorderPane {
       // name not updated
       Platform.runLater(() -> categoriesMap.computeIfPresent(name.toLowerCase(), (k, e) -> {
         e.editablePropertyProperty().unbind();
-        final CategoryItem item = new CategoryItem(category);
-        item.editablePropertyProperty().bind(editButton.selectedProperty());
-        return item;
+        return getCategoryItem(category);
       }));
     } else {
       // remove previous
@@ -255,10 +270,16 @@ class LeftSideView extends BorderPane {
         center.setCenter(categories);
       });
     }
+    final CategoryItem item = getCategoryItem(category);
+    Platform.runLater(() -> categoriesMap.put(category.getName().toLowerCase(), item));
+  }
+
+  private CategoryItem getCategoryItem(final Category category) {
     final CategoryItem item = new CategoryItem(category);
     item.editablePropertyProperty().bind(editButton.selectedProperty());
     item.setOnDelete(controller::deleteCategory);
-    Platform.runLater(() -> categoriesMap.put(category.getName().toLowerCase(), item));
+    item.setOnEdit(c -> showCreateEditCategoryView(item, c));
+    return item;
   }
 
   void removeCategory(final Category category) {

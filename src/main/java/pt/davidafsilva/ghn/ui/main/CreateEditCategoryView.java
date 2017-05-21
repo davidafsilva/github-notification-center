@@ -22,6 +22,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import pt.davidafsilva.ghn.model.filter.post.PostFilter;
+import pt.davidafsilva.ghn.model.mutable.Category;
 import reactor.core.scheduler.Schedulers;
 
 /**
@@ -33,6 +34,7 @@ class CreateEditCategoryView extends BorderPane {
   private FiltersPane filtersPane;
   private JFXSpinner saveSpinner;
   private JFXButton saveBtn;
+  private Category editingCategory;
 
   CreateEditCategoryView(final Predicate<String> categoryWithNameExists,
       final BiConsumer<String, PostFilter> onSave, final Runnable onClose) {
@@ -119,6 +121,14 @@ class CreateEditCategoryView extends BorderPane {
         showError(nameField, "There's already a category with the same name");
       }
       nameField.requestFocus();
+    }
+  }
+
+  void setEditingCategory(final Category editingCategory) {
+    this.editingCategory = editingCategory;
+    if (editingCategory != null) {
+      nameField.setText(editingCategory.getName());
+      //editingCategory.getPostFilter().ifPresent(filter -> filter.visit(xxx));
     }
   }
 

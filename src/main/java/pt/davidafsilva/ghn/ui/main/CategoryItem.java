@@ -32,17 +32,74 @@ class CategoryItem extends BorderPane {
   private static final String _99_PLUS = "99+";
   private Consumer<Category> onDelete = s -> {
   };
+  private Consumer<Category> onEdit = s -> {
+  };
 
   private BooleanProperty editableProperty = new SimpleBooleanProperty(false);
   private final JFXBadge badge;
   private final Label trash;
+  private final Label edit;
 
   CategoryItem(final Category category) {
     // style
     getStyleClass().add("ghn-category-item");
 
+    // trash can and edit
+    final HBox left = new HBox();
+    trash = createTrashCan(category);
+    edit = createEdit(category);
+    left.setSpacing(3);
+    left.getChildren().addAll(trash, edit);
+
+    final Label text = new Label(category.getName());
+    text.setMaxWidth(110);
+
+    badge = new JFXBadge(new Label());
+    badge.setAlignment(Pos.CENTER_LEFT);
+    updateCount(category.getUnreadCount());
+
+    initListeners();
+
+    setLeft(left);
+    setAlignment(left, Pos.TOP_LEFT);
+    setCenter(text);
+    setAlignment(text, Pos.CENTER_LEFT);
+    setMargin(text, new Insets(0, 0, 0, 10));
+    setRight(badge);
+    setAlignment(badge, Pos.CENTER_RIGHT);
+  }
+
+  private Label createEdit(final Category category) {
+    // trash can
     final GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-    trash = fontAwesome.create(FontAwesome.Glyph.TRASH)
+    final Label edit = fontAwesome.create(FontAwesome.Glyph.EDIT)
+        .size(14);
+    edit.setPadding(new Insets(1, 0, 0, 0));
+    edit.setBorder(Border.EMPTY);
+    edit.setVisible(false);
+    edit.setTooltip(new Tooltip("Edit"));
+    edit.getStyleClass().add("edit");
+    if (category.isEditable()) {
+      edit.setOnMousePressed(e -> {
+        e.consume();
+        onEdit.accept(category);
+      });
+      edit.setOnTouchPressed(e -> {
+        e.consume();
+        onEdit.accept(category);
+      });
+      edit.getStyleClass().add("edit-enabled");
+    } else {
+      edit.getStyleClass().add("edit-disabled");
+    }
+
+    return edit;
+  }
+
+  private Label createTrashCan(final Category category) {
+    // trash can
+    final GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+    final Label trash = fontAwesome.create(FontAwesome.Glyph.TRASH)
         .size(14);
     trash.setBorder(Border.EMPTY);
     trash.setVisible(false);
@@ -62,22 +119,7 @@ class CategoryItem extends BorderPane {
       trash.getStyleClass().add("trash-can-disabled");
     }
 
-    final Label text = new Label(category.getName());
-    text.setMaxWidth(110);
-
-    badge = new JFXBadge(new Label());
-    badge.setAlignment(Pos.CENTER_LEFT);
-    updateCount(category.getUnreadCount());
-
-    initListeners();
-
-    setLeft(trash);
-    setAlignment(trash, Pos.TOP_LEFT);
-    setCenter(text);
-    setAlignment(text, Pos.CENTER_LEFT);
-    setMargin(text, new Insets(0, 0, 0, 10));
-    setRight(badge);
-    setAlignment(badge, Pos.CENTER_RIGHT);
+    return trash;
   }
 
   private void confirmDelete(final Category category) {
@@ -95,7 +137,10 @@ class CategoryItem extends BorderPane {
   }
 
   private void initListeners() {
-    editableProperty.addListener((observable, oldValue, newValue) -> trash.setVisible(newValue));
+    editableProperty.addListener((observable, oldValue, newValue) -> {
+      trash.setVisible(newValue);
+      edit.setVisible(newValue);
+    });
   }
 
   BooleanProperty editablePropertyProperty() {
@@ -108,6 +153,10 @@ class CategoryItem extends BorderPane {
 
   void setOnDelete(final Consumer<Category> onDelete) {
     this.onDelete = Objects.requireNonNull(onDelete, "onDelete");
+  }
+
+  void setOnEdit(final Consumer<Category> onEdit) {
+    this.onEdit = onEdit;
   }
 
   void updateCount(final int count) {

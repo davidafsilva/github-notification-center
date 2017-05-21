@@ -7,6 +7,7 @@ import com.couchbase.lite.Document;
 import com.couchbase.lite.JavaContext;
 import com.couchbase.lite.Manager;
 import com.couchbase.lite.QueryOptions;
+import com.couchbase.lite.UnsavedRevision;
 import com.couchbase.lite.View;
 
 import org.slf4j.Logger;
@@ -83,6 +84,7 @@ class CouchbaseFileBackedStorageService implements StorageService {
         final QueryOptions options = new QueryOptions();
         return Flux.fromIterable(view.query(options))
             .map(row -> {
+              System.out.println("####### " + row);
               if (type.isInstance(row.getValue())) {
                 return (O) row.getValue();
               } else {
@@ -115,13 +117,18 @@ class CouchbaseFileBackedStorageService implements StorageService {
     final Database database = DatabaseHolder.database;
     try {
       final Document document = database.getDocument(value.getId());
-      Map<String, Object> properties = document.getProperties();
-      if (properties == null) {
-        properties = new HashMap<>();
+      if (document.getCurrentRevision() == null) {
+        final Map<String, Object> properties = new HashMap<>();
         properties.put("type", value.getClass().getCanonicalName());
+        properties.put("value", marshall(value));
+        document.putProperties(properties);
+      } else {
+        final UnsavedRevision revision = document.createRevision();
+        Map<String, Object> properties = revision.getUserProperties();
+        properties.put("value", marshall(value));
+        revision.setUserProperties(properties);
+        revision.save();
       }
-      properties.put("value", marshall(value));
-      document.putProperties(properties);
       return Mono.empty();
     } catch (final CouchbaseLiteException e) {
       LOGGER.error("unable to save id: {}", value.getId());
