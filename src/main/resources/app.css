@@ -230,6 +230,10 @@
     -fx-pref-width: 620;
 }
 
+.ghn-create-category-pane .label {
+    -fx-text-fill: rgba(88, 170, 150, 0.7);
+}
+
 .ghn-create-category-pane-bottom {
     -fx-padding: 30 10 10 0;
     -fx-spacing: 5;
@@ -261,6 +265,11 @@
 
 .ghn-filter-pane .jfx-combo-box .jfx-list-cell:selected .label {
     -fx-text-fill: white;
+}
+
+.ghn-filter-pane .jfx-combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgb(36, 41, 6);
 }
 
 .ghn-filter-pane .jfx-text-field {

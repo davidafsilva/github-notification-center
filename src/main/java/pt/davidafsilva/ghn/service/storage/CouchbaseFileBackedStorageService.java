@@ -84,7 +84,6 @@ class CouchbaseFileBackedStorageService implements StorageService {
         final QueryOptions options = new QueryOptions();
         return Flux.fromIterable(view.query(options))
             .map(row -> {
-              System.out.println("####### " + row);
               if (type.isInstance(row.getValue())) {
                 return (O) row.getValue();
               } else {
