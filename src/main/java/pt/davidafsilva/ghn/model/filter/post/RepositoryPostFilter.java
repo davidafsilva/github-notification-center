@@ -18,18 +18,18 @@ class RepositoryPostFilter implements PostFilter {
   @JsonProperty
   private final StringFilter descriptionFilter;
   @JsonProperty
-  private final StringFilter userFilter;
+  private final StringFilter ownerFilter;
 
   @JsonCreator
   private RepositoryPostFilter(
       @JsonProperty(value = "type", required = true) final PostFilterType type,
       @JsonProperty(value = "nameFilter") final StringFilter nameFilter,
       @JsonProperty(value = "descriptionFilter") final StringFilter descriptionFilter,
-      @JsonProperty(value = "userFilter") final StringFilter userFilter) {
+      @JsonProperty(value = "ownerFilter") final StringFilter ownerFilter) {
     this.type = type;
     this.nameFilter = nameFilter;
     this.descriptionFilter = descriptionFilter;
-    this.userFilter = userFilter;
+    this.ownerFilter = ownerFilter;
   }
 
   @Override
@@ -38,11 +38,24 @@ class RepositoryPostFilter implements PostFilter {
   }
 
   @Override
+  public void accept(final PostFilterVisitor visitor) {
+    if (nameFilter != null) {
+      visitor.repoName(nameFilter.getType(), nameFilter.getComparisonValue());
+    }
+    if (descriptionFilter != null) {
+      visitor.repoDescription(descriptionFilter.getType(), descriptionFilter.getComparisonValue());
+    }
+    if (ownerFilter != null) {
+      visitor.repoOwner(ownerFilter.getType(), ownerFilter.getComparisonValue());
+    }
+  }
+
+  @Override
   public boolean filter(final Notification notification) {
     final Repository repository = notification.getRepository();
     return !(nameFilter != null && !nameFilter.filter(repository.getName())) &&
         !(descriptionFilter != null && !descriptionFilter.filter(repository.getDescription())) &&
-        !(userFilter != null && !userFilter.filter(repository.getOwner().getLogin()));
+        !(ownerFilter != null && !ownerFilter.filter(repository.getOwner().getLogin()));
   }
 
   static RepositoryPostFilter name(final StringFilter filter) {

@@ -9,6 +9,7 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +31,7 @@ import javafx.scene.paint.Color;
 import pt.davidafsilva.ghn.model.filter.post.PostFilter;
 import pt.davidafsilva.ghn.model.filter.post.PostFilterBuilder;
 import pt.davidafsilva.ghn.model.filter.post.PostFilterBuilder.FilterOperator;
+import pt.davidafsilva.ghn.model.filter.post.PostFilterVisitor;
 import pt.davidafsilva.ghn.model.filter.post.StringFilter;
 import pt.davidafsilva.ghn.util.Consumer3;
 
@@ -45,14 +47,26 @@ class FiltersPane extends GridPane {
     OPERATORS.put("OR", PostFilter::or);
   }
 
+  private static final int AND_INDEX = 0;
+  private static final int OR_INDEX = 1;
+
   private static final List<FilterType> FILTER_TYPES = Arrays.asList(
       FilterType.REPO_OWNER, FilterType.REPO_NAME, FilterType.REPO_DESC,
       FilterType.NOTIF_TITLE, FilterType.NOTIF_TYPE
   );
 
   private static final List<StringFnType> STR_MATCH_FUNCTIONS = Arrays.asList(
-      StringFnType.CONTAINS, StringFnType.STARTS_WITH, StringFnType.ENDS_WITH, StringFnType.PATTERN
+      StringFnType.CONTAINS, StringFnType.STARTS_WITH,
+      StringFnType.ENDS_WITH, StringFnType.PATTERN
   );
+  private static Map<StringFilter.Type, StringFnType> STR_MATCH_FN_MAPPING = new HashMap<>();
+
+  static {
+    STR_MATCH_FN_MAPPING.put(StringFilter.Type.CONTAINS, StringFnType.CONTAINS);
+    STR_MATCH_FN_MAPPING.put(StringFilter.Type.STARTS_WITH, StringFnType.STARTS_WITH);
+    STR_MATCH_FN_MAPPING.put(StringFilter.Type.ENDS_WITH, StringFnType.ENDS_WITH);
+    STR_MATCH_FN_MAPPING.put(StringFilter.Type.PATTERN, StringFnType.PATTERN);
+  }
 
   private int currentRows;
 
@@ -272,6 +286,73 @@ class FiltersPane extends GridPane {
     return textField.textProperty().getValueSafe();
   }
 
+  @SuppressWarnings("unchecked")
+  void setEditing(final PostFilter postFilter) {
+    postFilter.accept(new PostFilterVisitor() {
+      @Override
+      public void and(final PostFilter left, final PostFilter right) {
+        appendNewFilterForm();
+        final int offset = (currentRows-1) * 5;
+        final JFXComboBox<Label> operatorField = (JFXComboBox<Label>) getChildren().get(offset);
+        operatorField.getSelectionModel().select(AND_INDEX);
+      }
+
+      @Override
+      public void or(final PostFilter left, final PostFilter right) {
+        appendNewFilterForm();
+        final int offset = (currentRows-1) * 5;
+        final JFXComboBox<Label> operatorField = (JFXComboBox<Label>) getChildren().get(offset);
+        operatorField.getSelectionModel().select(OR_INDEX);
+      }
+
+      @Override
+      public void repoOwner(final StringFilter.Type matchType, final String matchValue) {
+        fill(FILTER_TYPES.indexOf(FilterType.REPO_OWNER),
+            STR_MATCH_FUNCTIONS.indexOf(STR_MATCH_FN_MAPPING.get(matchType)), matchValue);
+      }
+
+      @Override
+      public void repoName(final StringFilter.Type matchType, final String matchValue) {
+        fill(FILTER_TYPES.indexOf(FilterType.REPO_NAME),
+            STR_MATCH_FUNCTIONS.indexOf(STR_MATCH_FN_MAPPING.get(matchType)), matchValue);
+      }
+
+      @Override
+      public void repoDescription(final StringFilter.Type matchType, final String matchValue) {
+        fill(FILTER_TYPES.indexOf(FilterType.REPO_DESC),
+            STR_MATCH_FUNCTIONS.indexOf(STR_MATCH_FN_MAPPING.get(matchType)), matchValue);
+      }
+
+      @Override
+      public void notificationType(final StringFilter.Type matchType, final String matchValue) {
+        fill(FILTER_TYPES.indexOf(FilterType.NOTIF_TYPE),
+            STR_MATCH_FUNCTIONS.indexOf(STR_MATCH_FN_MAPPING.get(matchType)), matchValue);
+      }
+
+      @Override
+      public void notificationTitle(final StringFilter.Type matchType, final String matchValue) {
+        fill(FILTER_TYPES.indexOf(FilterType.NOTIF_TITLE),
+            STR_MATCH_FUNCTIONS.indexOf(STR_MATCH_FN_MAPPING.get(matchType)), matchValue);
+      }
+
+      private void fill(final int filterTypeIndex, final int strFnTypeIndex, final String txt) {
+        if (currentRows == 0) {
+          appendNewFilterForm();
+        }
+        final int offset = (currentRows-1) * 5;
+        final JFXComboBox<Label> filterTypeField =
+            (JFXComboBox<Label>) getChildren().get(offset + 1);
+        final JFXComboBox<Label> strFnTypeField =
+            (JFXComboBox<Label>) getChildren().get(offset + 2);
+        final JFXTextField textField = (JFXTextField) getChildren().get(offset + 3);
+        filterTypeField.getSelectionModel().select(filterTypeIndex);
+        strFnTypeField.getSelectionModel().select(strFnTypeIndex);
+        textField.setText(txt);
+      }
+    });
+
+  }
+
   private enum FilterType {
     REPO_OWNER("Repository owner", PostFilterBuilder::repoOwner),
     REPO_NAME("Repository name", PostFilterBuilder::repoName),
@@ -293,7 +374,7 @@ class FiltersPane extends GridPane {
     CONTAINS("Contains", StringFilter::contains),
     STARTS_WITH("Starts with", StringFilter::startsWith),
     ENDS_WITH("Ends with", StringFilter::endsWith),
-    PATTERN("Pattern", StringFilter::regex);
+    PATTERN("Pattern", StringFilter::pattern);
 
     private final String description;
     private final Function<String, StringFilter> mapper;

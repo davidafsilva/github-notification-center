@@ -34,6 +34,16 @@ class SubjectPostFilter implements PostFilter {
   }
 
   @Override
+  public void accept(final PostFilterVisitor visitor) {
+    if (titleFilter != null) {
+      visitor.notificationTitle(titleFilter.getType(), titleFilter.getComparisonValue());
+    }
+    if (typeFilter != null) {
+      visitor.notificationTitle(typeFilter.getType(), typeFilter.getComparisonValue());
+    }
+  }
+
+  @Override
   public boolean filter(final Notification notification) {
     final Subject subject = notification.getSubject();
     return !(titleFilter != null && !titleFilter.filter(subject.getTitle())) &&

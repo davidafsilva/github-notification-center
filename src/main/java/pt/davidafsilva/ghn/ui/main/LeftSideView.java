@@ -229,7 +229,7 @@ class LeftSideView extends BorderPane {
         },
         createCategoryDialog::hide);
     contents.prefHeightProperty().bind(heightProperty().subtract(150));
-    contents.setEditingCategory(category);
+    contents.setEditing(category);
     createCategoryDialog.setContentNode(contents);
     if (category == null || item == null) {
       createCategoryDialog.setTitle("Create Category");

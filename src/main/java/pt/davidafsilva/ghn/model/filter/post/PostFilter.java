@@ -14,6 +14,8 @@ public interface PostFilter {
 
   PostFilterType getType();
 
+  void accept(final PostFilterVisitor visitor);
+
   default PostFilter and(final PostFilter other) {
     return new AndPostFilter(this, other);
   }

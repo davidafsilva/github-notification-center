@@ -19,4 +19,8 @@ class NoOpFilter implements PostFilter {
   public PostFilterType getType() {
     return PostFilterType.NO_OP;
   }
+
+  @Override
+  public void accept(final PostFilterVisitor visitor) {
+  }
 }

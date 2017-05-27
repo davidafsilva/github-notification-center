@@ -34,4 +34,11 @@ class OrPostFilter implements PostFilter {
   public PostFilterType getType() {
     return PostFilterType.OR;
   }
+
+  @Override
+  public void accept(final PostFilterVisitor visitor) {
+    left.accept(visitor);
+    visitor.or(left, right);
+    right.accept(visitor);
+  }
 }

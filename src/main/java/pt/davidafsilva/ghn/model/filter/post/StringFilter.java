@@ -29,11 +29,11 @@ public class StringFilter {
     return type.tester.test(value, comparisonValue);
   }
 
-  public String getComparisonValue() {
+  String getComparisonValue() {
     return comparisonValue;
   }
 
-  public Type getType() {
+  Type getType() {
     return type;
   }
 
@@ -41,7 +41,7 @@ public class StringFilter {
     CONTAINS(String::contains),
     STARTS_WITH(String::startsWith),
     ENDS_WITH(String::endsWith),
-    REGEX(String::matches);
+    PATTERN(String::matches);
 
     private final BiPredicate<String, String> tester;
 
@@ -60,8 +60,8 @@ public class StringFilter {
     return new StringFilter(Type.ENDS_WITH, value);
   }
 
-  public static StringFilter regex(final String regex) {
-    Objects.nonNull(Pattern.compile(regex));
-    return new StringFilter(Type.REGEX, regex);
+  public static StringFilter pattern(final String pattern) {
+    Objects.nonNull(Pattern.compile(pattern));
+    return new StringFilter(Type.PATTERN, pattern);
   }
 }

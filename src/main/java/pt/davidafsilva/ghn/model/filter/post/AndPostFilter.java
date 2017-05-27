@@ -34,4 +34,11 @@ class AndPostFilter implements PostFilter {
   public PostFilterType getType() {
     return PostFilterType.AND;
   }
+
+  @Override
+  public void accept(final PostFilterVisitor visitor) {
+    left.accept(visitor);
+    visitor.and(left, right);
+    right.accept(visitor);
+  }
 }
