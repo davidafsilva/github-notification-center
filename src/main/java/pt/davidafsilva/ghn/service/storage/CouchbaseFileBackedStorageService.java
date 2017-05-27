@@ -9,6 +9,7 @@ import com.couchbase.lite.Manager;
 import com.couchbase.lite.QueryOptions;
 import com.couchbase.lite.UnsavedRevision;
 import com.couchbase.lite.View;
+import com.couchbase.lite.storage.SQLiteNativeLibrary;
 
 import org.slf4j.Logger;
 
@@ -43,6 +44,7 @@ class CouchbaseFileBackedStorageService implements StorageService {
     static {
       try {
         // initialize the database
+        SQLiteNativeLibrary.TEST_NATIVE_LIBRARY_NAME = SQLiteNativeLibrary.JNI_SQLITE_CUSTOM_LIBRARY;
         final Context context = getContext();
         final Manager manager = new Manager(context, Manager.DEFAULT_OPTIONS);
         database = manager.getDatabase("ghnc");
