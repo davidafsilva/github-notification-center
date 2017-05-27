@@ -9,7 +9,7 @@ import java.util.function.BinaryOperator;
  */
 public class PostFilterBuilder {
 
-  private static final PostFilter NO_FILTER = n->true;
+  private static final PostFilter NO_FILTER = new NoOpFilter();
 
   // the initial filter
   private FilterOperator operator = PostFilter::and;
@@ -53,7 +53,7 @@ public class PostFilterBuilder {
   }
 
   public PostFilterBuilder repoOwner(final FilterOperator operator, final StringFilter owner) {
-    return addFilter(operator, OwnerPostFilter.owner(owner));
+    return addFilter(operator, RepositoryPostFilter.owner(owner));
   }
 
   public PostFilterBuilder repoName(final StringFilter name) {
@@ -68,7 +68,8 @@ public class PostFilterBuilder {
     return repoDescription(description);
   }
 
-  public PostFilterBuilder repoDescription(final FilterOperator operator, final StringFilter description) {
+  public PostFilterBuilder repoDescription(final FilterOperator operator,
+      final StringFilter description) {
     return addFilter(operator, RepositoryPostFilter.description(description));
   }
 
@@ -89,7 +90,12 @@ public class PostFilterBuilder {
   }
 
   private PostFilterBuilder addFilter(final FilterOperator operator, final PostFilter filter) {
-    filterGroups.push(operator.apply(filterGroups.pop(), filter));
+    final PostFilter current = filterGroups.pop();
+    if (current == NO_FILTER) {
+      filterGroups.push(filter);
+    } else {
+      filterGroups.push(operator.apply(current, filter));
+    }
     return this;
   }
 

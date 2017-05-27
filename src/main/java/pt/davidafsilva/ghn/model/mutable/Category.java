@@ -2,16 +2,13 @@ package pt.davidafsilva.ghn.model.mutable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.Optional;
 
 import pt.davidafsilva.ghn.model.AbstractModel;
 import pt.davidafsilva.ghn.model.Persisted;
 import pt.davidafsilva.ghn.model.filter.post.PostFilter;
-import pt.davidafsilva.ghn.model.filter.post.PostFilterDeserializer;
-import pt.davidafsilva.ghn.model.filter.post.PostFilterSerializer;
 
 /**
  * @author david
@@ -67,12 +64,10 @@ public class Category extends AbstractModel implements Persisted {
     this.unreadCount = unreadCount;
   }
 
-  @JsonSerialize(contentUsing = PostFilterSerializer.class)
   public Optional<PostFilter> getPostFilter() {
     return Optional.ofNullable(postFilter);
   }
 
-  @JsonDeserialize(using = PostFilterDeserializer.class)
   public void setPostFilter(final PostFilter postFilter) {
     this.postFilter = postFilter;
   }

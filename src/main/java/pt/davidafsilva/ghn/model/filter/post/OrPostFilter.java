@@ -1,5 +1,9 @@
 package pt.davidafsilva.ghn.model.filter.post;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import pt.davidafsilva.ghn.model.Notification;
 
 /**
@@ -7,10 +11,15 @@ import pt.davidafsilva.ghn.model.Notification;
  */
 class OrPostFilter implements PostFilter {
 
+  @JsonProperty
   private final PostFilter left;
+  @JsonProperty
   private final PostFilter right;
 
-  OrPostFilter(final PostFilter left, final PostFilter right) {
+  @JsonCreator
+  OrPostFilter(
+      @JsonProperty(value = "left", required = true) final PostFilter left,
+      @JsonProperty(value = "right", required = true) final PostFilter right) {
     this.left = left;
     this.right = right;
   }
@@ -18,5 +27,11 @@ class OrPostFilter implements PostFilter {
   @Override
   public boolean filter(final Notification notification) {
     return left.filter(notification) || right.filter(notification);
+  }
+
+  @Override
+  @JsonIgnore
+  public PostFilterType getType() {
+    return PostFilterType.OR;
   }
 }

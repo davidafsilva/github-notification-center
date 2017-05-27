@@ -1,15 +1,18 @@
 package pt.davidafsilva.ghn.model.filter.post;
 
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import pt.davidafsilva.ghn.model.Notification;
 
 /**
  * @author david
  */
-public interface PostFilter extends Serializable {
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+public interface PostFilter {
 
   boolean filter(final Notification notification);
+
+  PostFilterType getType();
 
   default PostFilter and(final PostFilter other) {
     return new AndPostFilter(this, other);
