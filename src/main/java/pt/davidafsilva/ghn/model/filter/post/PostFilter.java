@@ -10,6 +10,8 @@ import pt.davidafsilva.ghn.model.Notification;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface PostFilter {
 
+  PostFilter NO_OP = new NoOpFilter();
+
   boolean filter(final Notification notification);
 
   PostFilterType getType();

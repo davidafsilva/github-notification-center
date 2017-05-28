@@ -169,6 +169,10 @@ class CategoryItem extends BorderPane {
     badge.refreshBadge();
   }
 
+  String getText() {
+    return ((Label) getCenter()).getText();
+  }
+
   private static class DeleteConfirmationPane extends BorderPane {
 
     DeleteConfirmationPane(final Category category, final Runnable onYes, final Runnable onNo) {

@@ -10,13 +10,15 @@ import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Objects;
-import java.util.TreeMap;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
+import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -40,10 +42,11 @@ class LeftSideView extends BorderPane {
 
   private final NotificationsController controller;
   private final ObservableMap<String, CategoryItem> categoriesMap = FXCollections
-      .observableMap(new TreeMap<String, CategoryItem>(Comparator.naturalOrder()));
+      .observableMap(new HashMap<>());
 
   private HBox createCategoryBox;
-  private JFXListView<CategoryItem> categories;
+  //private ObservableList<CategoryItem> categories;
+  private JFXListView<CategoryItem> listView;
   private JFXToggleButton editButton;
   private PopOver createCategoryDialog;
 
@@ -177,14 +180,16 @@ class LeftSideView extends BorderPane {
     container.setTop(topPane);
 
     // categories
-    categories = new JFXListView<>();
-    categories.getStyleClass().add("ghn-categories-list");
+    listView = new JFXListView<>();
+    listView.getStyleClass().add("ghn-categories-list");
+    final ObservableList<CategoryItem> categories = FXCollections.observableArrayList();
+    listView.setItems(new SortedList<>(categories, Comparator.comparing(CategoryItem::getText)));
     categoriesMap.addListener((MapChangeListener<String, CategoryItem>) change -> {
       if (change.getValueRemoved() != null) {
-        categories.getItems().remove(change.getValueRemoved());
+        categories.remove(change.getValueRemoved());
       }
       if (change.getValueAdded() != null) {
-        categories.getItems().add(change.getValueAdded());
+        categories.add(change.getValueAdded());
       }
     });
     // loading
@@ -267,7 +272,7 @@ class LeftSideView extends BorderPane {
       final BorderPane center = (BorderPane) getCenter();
       Platform.runLater(() -> {
         center.getTop().setVisible(true);
-        center.setCenter(categories);
+        center.setCenter(listView);
       });
     }
     final CategoryItem item = getCategoryItem(category);

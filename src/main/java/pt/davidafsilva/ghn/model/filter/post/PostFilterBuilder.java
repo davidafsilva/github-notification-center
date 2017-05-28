@@ -9,8 +9,6 @@ import java.util.function.BinaryOperator;
  */
 public class PostFilterBuilder {
 
-  private static final PostFilter NO_FILTER = new NoOpFilter();
-
   // the initial filter
   private FilterOperator operator = PostFilter::and;
   private Stack<PostFilter> filterGroups = new Stack<>();
@@ -26,7 +24,7 @@ public class PostFilterBuilder {
   }
 
   public PostFilterBuilder openGroup() {
-    filterGroups.push(NO_FILTER);
+    filterGroups.push(PostFilter.NO_OP);
     return this;
   }
 
@@ -91,7 +89,7 @@ public class PostFilterBuilder {
 
   private PostFilterBuilder addFilter(final FilterOperator operator, final PostFilter filter) {
     final PostFilter current = filterGroups.pop();
-    if (current == NO_FILTER) {
+    if (current == PostFilter.NO_OP) {
       filterGroups.push(filter);
     } else {
       filterGroups.push(operator.apply(current, filter));

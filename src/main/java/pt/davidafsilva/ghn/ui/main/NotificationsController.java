@@ -91,7 +91,7 @@ public class NotificationsController {
   void createCategory(final String name, final PostFilter filter) {
     final Category category = new Category(UUID.randomUUID().toString());
     category.setName(name);
-    category.setPostFilter(filter);
+    category.setPostFilter(filter == PostFilter.NO_OP ? null : filter);
     category.setEditable(true);
     category.setDeletable(true);
     saveUpdateCategory(category, notificationsView::addCategory);
@@ -100,7 +100,7 @@ public class NotificationsController {
   void updateCategory(final Category prev, final String name, final PostFilter filter) {
     final Category category = new Category(prev.getId());
     category.setName(name);
-    category.setPostFilter(filter);
+    category.setPostFilter(filter == PostFilter.NO_OP ? null : filter);
     category.setEditable(true);
     category.setDeletable(true);
     saveUpdateCategory(category, c -> notificationsView.updateCategory(prev.getName(), c));
