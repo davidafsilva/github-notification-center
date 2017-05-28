@@ -277,7 +277,12 @@ class LeftSideView extends BorderPane {
   private CategoryItem getCategoryItem(final Category category) {
     final CategoryItem item = new CategoryItem(category);
     item.editablePropertyProperty().bind(editButton.selectedProperty());
-    item.setOnDelete(controller::deleteCategory);
+    item.setOnDelete(c -> {
+      if (createCategoryDialog.isShowing()) {
+        createCategoryDialog.hide();
+      }
+      controller.deleteCategory(c);
+    });
     item.setOnEdit(c -> showCreateEditCategoryView(item, c));
     return item;
   }
