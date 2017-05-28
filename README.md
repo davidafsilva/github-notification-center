@@ -9,9 +9,14 @@ try out JavaFX as well as reactor.
 
 ## Powered by
 * [JavaFx](http://www.oracle.com/technetwork/java/javase/overview/javafx-overview-2158620.html) - Oracle Binary Code License
-* [Reactor](https://projectreactor.io/) - Apache Software License 2
-* [Jackson](https://github.com/FasterXML/jackson) - Apache Software License 2
 * [JFoeniX](http://www.jfoenix.com/) - Apache Software License 2
 * [ControlsFX](http://fxexperience.com/controlsfx/) - 3-Clause BSD
-* Partial / Modified port of [osx-keychain-java](https://github.com/conormcd/osx-keychain-java) - Simplified BSD License
+* [Reactor](https://projectreactor.io/) - Apache Software License 2
+* [Jackson](https://github.com/FasterXML/jackson) - Apache Software License 2
+* [jKeychain](https://github.com/davidafsilva/jkeychain) - Simplified BSD License
+* [JNA](https://github.com/java-native-access/jna) - Apache Software License 2
+* [oshi](https://github.com/oshi/oshi) - Eclipse Public License 1.0
+* [couchbase](https://github.com/couchbase/couchbase-lite-java) - Apache Software License 2
+
+
 
